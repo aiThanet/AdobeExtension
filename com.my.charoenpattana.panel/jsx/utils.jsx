@@ -112,6 +112,8 @@ function moveLinkTo(fileRef, destFolder) {
   var file = File(fileRef);
   var doc = app.open(file);
 
+  var missing = {};
+
   var indd_links = [];
 
   var links = doc.links;
@@ -150,14 +152,21 @@ function moveLinkTo(fileRef, destFolder) {
           indd_links.push(targetFile.getFullPath());
         }
       }
+    } else {
+      missing[file.getFileNameWithExtension()] = true;
     }
   }
   doc.save(file);
   doc.close();
 
   for (var i = 0; i < indd_links.length; i++) {
-    moveLinkTo(indd_links[i], destFolder);
+    var this_miss = moveLinkTo(indd_links[i], destFolder);
+    for (var key in this_miss) {
+      missing[key] = true;
+    }
   }
+
+  return missing;
 }
 
 function moveLink(fileRef) {
@@ -166,7 +175,7 @@ function moveLink(fileRef) {
 
   createImageFolder(folderPath);
 
-  moveLinkTo(fileRef, folderPath);
+  var missing = moveLinkTo(fileRef, folderPath);
 
   var folder_array = [];
   var link_array = [];
@@ -194,7 +203,7 @@ function moveLink(fileRef) {
     }
   }
 
-  return notUsedFiles;
+  return [missing, notUsedFiles];
 }
 
 function updateAllOutdatedLinks(doc) {
