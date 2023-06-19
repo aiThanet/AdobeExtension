@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Your First Panel</title>
+    <link rel="stylesheet" href="../../css/mystyle.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row mx-1 my-2"><button id="restartExt" class="btn btn-secondary">รีเซ็ต</button></div>
+    </div>
+
+    <div class="container-fluid" id="displayBody">
+      <div class="row mx-1 my-2"><h1>โปรแกรมค้นหาลิงค์</h1></div>
+
+      <div class="row mx-2 my-2">
+        <label for="folder">เลือกโฟลเดอร์ที่ต้องการอัพเดต <br /><i>(รองรับเฉพาะไฟล์ .indd)</i></label> <input type="file" id="folderSelector" multiple />
+      </div>
+
+      <div class="row mx-2 my-2">
+        <label for="folder"
+          >ใส่โฟลเดอร์ที่ต้องการค้นหา <br />
+          <i>(หากไม่กรอกจะค้นหาจากโฟลเดอร์ตัวเอง)</i>
+        </label>
+        <div class="input-group mb-3">
+          <input type="text" id="findFolder" class="form-control txt-uppercase" aria-label="Default" aria-describedby="inputGroup-sizing-default" />
+        </div>
+      </div>
+
+      <div class="row mx-1 my-2">
+        <h2>ไฟล์ที่เลือก</h2>
+        <div class="">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ปุ่ม</th>
+                <th>ไฟล์</th>
+              </tr>
+            </thead>
+            <tbody id="fileDisplay"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row mx-1"><button id="confirm" class="btn btn-primary">ตกลง</button></div>
+    </div>
+
+    <script type="text/javascript" src="../../js/lib/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" src="../../js/lib/JSX.js"></script>
+    <script type="text/javascript" src="../../js/myutil.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
+</html>

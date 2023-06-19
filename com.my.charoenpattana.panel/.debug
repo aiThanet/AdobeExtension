@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ExtensionList>
+  <Extension Id="com.my.charoenpattana.findLinkPanel">
+    <HostList>
+      <Host Name="IDSN" Port="8091" />
+    </HostList>
+  </Extension>
+  <Extension Id="com.my.charoenpattana.moveImageLinkPanel">
+    <HostList>
+      <Host Name="IDSN" Port="8092" />
+    </HostList>
+  </Extension>
+  <Extension Id="com.my.charoenpattana.changeNamePanel">
+    <HostList>
+      <Host Name="IDSN" Port="8093" />
+    </HostList>
+  </Extension>
+</ExtensionList>

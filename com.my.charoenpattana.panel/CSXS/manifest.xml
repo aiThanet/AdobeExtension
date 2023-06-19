@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- 1) -->
+<ExtensionManifest ExtensionBundleId="com.my.charoenpattana" ExtensionBundleVersion="1.0.1" Version="7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ExtensionList>
+    <!-- 2) -->
+    <Extension Id="com.my.charoenpattana.moveImageLinkPanel" Version="1.1.1" />
+    <Extension Id="com.my.charoenpattana.changeNamePanel" Version="1.1.1" />
+    <Extension Id="com.my.charoenpattana.findLinkPanel" Version="1.1.1" />
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <!-- 3) -->
+      <Host Name="PHSP" Version="23.0" />
+      <Host Name="PHXS" Version="23.0" />
+      <Host Name="IDSN" Version="16.3" />
+    </HostList>
+    <LocaleList>
+      <Locale Code="All" />
+    </LocaleList>
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="11.0" />
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <!-- 2) -->
+     <Extension Id="com.my.charoenpattana.findLinkPanel">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/findLink/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>1. Charoenpattana Library - FindLink</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>750</Height>
+              <Width>400</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.my.charoenpattana.moveImageLinkPanel">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/moveImageLink/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>2. Charoenpattana Library - Move Link</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>600</Height>
+              <Width>400</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.my.charoenpattana.changeNamePanel">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/changeName/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>3. Charoenpattana Library - Change Name</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>750</Height>
+              <Width>400</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+   
+  </DispatchInfoList>
+</ExtensionManifest>
