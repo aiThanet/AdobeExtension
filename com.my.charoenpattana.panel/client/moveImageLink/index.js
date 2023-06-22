@@ -86,9 +86,16 @@ $("#confirm").on("click", e => {
       $("#displayBody").empty();
       $("#displayBody")[0].innerHTML = "<div class='row mx-1 my-2'><h2 class='text-center'>ไฟล์ที่มีลิงค์หาย</h2><div><table class='table'><thead><tr><th>ไฟล์</th></tr></thead><tbody id='resultDisplay'></tbody></table></div>";
       resultHtml = "";
+
       for (k in missing) {
-        resultHtml += `<tr><td>${k}</td></tr>`;
+        if (missing[k].length != 0) {
+          resultHtml += `<tr><td class='text-center bg-danger'>${k}</td></tr>`;
+          for (link of missing[k]) {
+            resultHtml += `<tr><td>${link}</td></tr>`;
+          }
+        }
       }
+
       $("#resultDisplay")[0].innerHTML = resultHtml;
 
       $("#displayBody2").empty();

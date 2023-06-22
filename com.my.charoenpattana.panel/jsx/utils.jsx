@@ -113,18 +113,17 @@ function moveLinkTo(fileRef, destFolder) {
   var doc = app.open(file);
 
   var missing = {};
-
-  var indd_links = [];
+  missing[file.getFileNameWithExtension()] = [];
 
   var links = doc.links;
-  for (i = 0; i < links.length; i++) {
+  for (var i = 0; i < links.length; i++) {
     var link = links[i];
     var linkFile = File(link.filePath);
     var linkExtension = linkFile.getFileExtension();
     var linkFolder = linkFile.getFolderPath();
 
     if (link.status != LinkStatus.LINK_MISSING) {
-      if (linkExtension == "indd" || (isImage(linkExtension) && linkFolder.indexOf("image") == -1)) {
+      if (linkExtension == "indd" || linkFolder.indexOf("image") == -1) {
         if (linkExtension == "indd") {
           var targetFolder = Folder(destFolder);
           var targetFile = File(targetFolder.fsName + "/" + linkFile.getFileNameWithExtension());
@@ -149,22 +148,24 @@ function moveLinkTo(fileRef, destFolder) {
         }
 
         if (linkExtension == "indd") {
-          indd_links.push(targetFile.getFullPath());
+          var this_miss = moveLinkTo(targetFile.getFullPath(), destFolder);
+          for (var key in this_miss) {
+            if (key in missing) {
+              missing[key] = missing[key].concat(this_miss[key]);
+            } else {
+              missing[key] = this_miss[key];
+            }
+          }
         }
+        link.update();
       }
     } else {
-      missing[file.getFileNameWithExtension()] = true;
+      missing[file.getFileNameWithExtension()].push(linkFile.getFullPath());
     }
   }
+
   doc.save(file);
   doc.close();
-
-  for (var i = 0; i < indd_links.length; i++) {
-    var this_miss = moveLinkTo(indd_links[i], destFolder);
-    for (var key in this_miss) {
-      missing[key] = true;
-    }
-  }
 
   return missing;
 }
