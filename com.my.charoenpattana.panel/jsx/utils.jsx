@@ -108,7 +108,7 @@ function isImage(extension) {
   return extension == "psd" || extension == "jpg" || extension == "png";
 }
 
-function moveLinkTo(fileRef, destFolder) {
+function moveLinkTo(fileRef, destFolder, level) {
   var file = File(fileRef);
   var doc = app.open(file);
 
@@ -116,11 +116,19 @@ function moveLinkTo(fileRef, destFolder) {
   missing[file.getFileNameWithExtension()] = [];
 
   var links = doc.links;
+  if (level == 1) {
+    progress(links.length);
+  }
+
   for (var i = 0; i < links.length; i++) {
     var link = links[i];
     var linkFile = File(link.filePath);
     var linkExtension = linkFile.getFileExtension();
     var linkFolder = linkFile.getFolderPath();
+
+    if (level == 1) {
+      progress.message(i + " / " + links.length + " : " + linkFile.getFileNameWithExtension());
+    }
 
     if (link.status != LinkStatus.LINK_MISSING) {
       if (linkExtension == "indd" || linkFolder.indexOf("image") == -1) {
@@ -148,7 +156,7 @@ function moveLinkTo(fileRef, destFolder) {
         }
 
         if (linkExtension == "indd") {
-          var this_miss = moveLinkTo(targetFile.getFullPath(), destFolder);
+          var this_miss = moveLinkTo(targetFile.getFullPath(), destFolder, level + 1);
           for (var key in this_miss) {
             if (key in missing) {
               missing[key] = missing[key].concat(this_miss[key]);
@@ -162,10 +170,14 @@ function moveLinkTo(fileRef, destFolder) {
     } else {
       missing[file.getFileNameWithExtension()].push(linkFile.getFullPath());
     }
+
+    if (level == 1) progress.increment();
   }
 
   doc.save(file);
   doc.close();
+
+  if (level == 1) progress.close();
 
   return missing;
 }
@@ -176,7 +188,7 @@ function moveLink(fileRef) {
 
   createImageFolder(folderPath);
 
-  var missing = moveLinkTo(fileRef, folderPath);
+  var missing = moveLinkTo(fileRef, folderPath, 1);
 
   var folder_array = [];
   var link_array = [];
@@ -312,4 +324,39 @@ function splitText(text, maxLength) {
   }
   texts.push(line);
   return texts;
+}
+
+function progress(steps) {
+  var b;
+
+  var t;
+
+  var w;
+
+  w = new Window("palette", "Progress", undefined, { closeButton: false });
+
+  t = w.add("statictext", undefined, undefined, { name: "text_progress" });
+
+  t.preferredSize = [450, -1]; // 450 pixels wide, default height.
+
+  if (steps) {
+    b = w.add("progressbar", undefined, 0, steps);
+
+    b.preferredSize = [450, -1]; // 450 pixels wide, default height.
+  }
+
+  progress.close = function () {
+    w.close();
+  };
+
+  progress.increment = function () {
+    b.value++;
+    w.update();
+  };
+
+  progress.message = function (message) {
+    t.text = message;
+  };
+
+  w.show();
 }
