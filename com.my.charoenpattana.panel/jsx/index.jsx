@@ -36,3 +36,29 @@ function startFindLink(files, folderDest) {
 
   return JSON.lave(missing);
 }
+
+function startUpdatePrice(files, priceList) {
+  //app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  var result = {
+    NotFoundPrice: [],
+    UpdatedPrice: [],
+    NotUpdatePrice: [],
+  };
+  for (var i = 0; i < files.length; i++) {
+    var fileName = File(files[i]).getFileName();
+    if (fileName in priceList) {
+      newPrice = parseInt(priceList[fileName]);
+      var oldPrice = updatePrice(files[i], newPrice);
+      var row = [fileName, oldPrice, newPrice];
+      if (oldPrice == newPrice) {
+        result.NotUpdatePrice.push(row);
+      } else {
+        result.UpdatedPrice.push(row);
+      }
+    } else {
+      result.NotFoundPrice.push(fileName);
+    }
+  }
+  //app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  return JSON.lave(result);
+}

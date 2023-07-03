@@ -360,3 +360,42 @@ function progress(steps) {
 
   w.show();
 }
+
+function getPriceText(rawPriceText) {
+  rawPriceText = rawPriceText.replace("\u0e23\u0e32\u0e04\u0e32", "");
+  rawPriceText = rawPriceText.replace(" ", "");
+  rawPriceText = rawPriceText.replace(".", "");
+  rawPriceText = rawPriceText.replace("-", "");
+  return rawPriceText;
+}
+
+function updatePrice(fileRef, newPrice) {
+  var file = File(fileRef);
+  var doc = app.open(file);
+  var currentPrice = -1;
+
+  for (var i = 0; i < app.activeDocument.stories.length; i++) {
+    var story = app.activeDocument.stories.item(i);
+    var content = story.contents;
+
+    if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
+      currentPriceText = getPriceText(content);
+      currentPrice = parseInt(currentPriceText.replace(/\D/g, ""));
+
+      if (currentPrice != newPrice) {
+        app.findTextPreferences = app.changeTextPreferences = null;
+        app.findTextPreferences.findWhat = content;
+        newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        app.changeTextPreferences.changeTo = newPriceText;
+        doc.changeText();
+      }
+      doc.save(file);
+      doc.close();
+      return currentPrice;
+    }
+  }
+
+  doc.save(file);
+  doc.close();
+  return currentPrice;
+}

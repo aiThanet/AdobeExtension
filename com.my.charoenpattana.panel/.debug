@@ -15,4 +15,9 @@
       <Host Name="IDSN" Port="8093" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.updatePricePanel">
+    <HostList>
+      <Host Name="IDSN" Port="8094" />
+    </HostList>
+  </Extension>
 </ExtensionList>
