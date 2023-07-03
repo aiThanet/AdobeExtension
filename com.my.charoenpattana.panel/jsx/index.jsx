@@ -46,8 +46,11 @@ function startUpdatePrice(files, priceList) {
   };
   for (var i = 0; i < files.length; i++) {
     var fileName = File(files[i]).getFileName();
-    if (fileName in priceList) {
-      newPrice = parseInt(priceList[fileName]);
+    // temporary fix rename from HG to V mismatch between catalog and system
+    var tempName = fileName.replace("HG", "V");
+
+    if (fileName in priceList || tempName in priceList) {
+      newPrice = fileName in priceList ? parseInt(priceList[fileName]) : parseInt(priceList[tempName]); //temporary fix rename from HG to V mismatch between catalog and system
       var oldPrice = updatePrice(files[i], newPrice);
       var row = [fileName, oldPrice, newPrice];
       if (oldPrice == newPrice) {

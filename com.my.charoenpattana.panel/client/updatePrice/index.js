@@ -46,19 +46,23 @@ $("#confirm").on("click", e => {
 
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
-      console.log(res);
-      data = JSON.parse(res);
+    $.get("http://localhost:3100/price/first", rawPriceList => {
+      priceList = JSON.parse(rawPriceList);
+      jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
+        console.log(res);
+        data = JSON.parse(res);
 
-      $("#displayBody").empty();
+        $("#displayBody").empty();
 
-      var html = "";
+        var html = "";
 
-      html += buildTable("รหัสสินค้าไม่ตรง", data.NotFoundPrice);
-      html += buildTablePrice("รหัสสินค้าที่อัพเดต", data.UpdatedPrice);
-      html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", data.NotUpdatePrice);
+        html += buildTable("รหัสสินค้าไม่ตรง", data.NotFoundPrice);
+        html += buildTablePrice("รหัสสินค้าที่อัพเดต", data.UpdatedPrice);
+        html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", data.NotUpdatePrice);
 
-      $("#displayBody")[0].innerHTML = html;
+        $("#displayBody")[0].innerHTML = html;
+      });
     });
+    return;
   }
 });
