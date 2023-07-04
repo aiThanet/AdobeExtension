@@ -46,7 +46,7 @@ $("#confirm").on("click", e => {
 
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    $.get("http://localhost:3100/price/first", rawPriceList => {
+    $.get("http://mathongapi.jpn.local/price/first", rawPriceList => {
       priceList = JSON.parse(rawPriceList);
       jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
         console.log(res);
