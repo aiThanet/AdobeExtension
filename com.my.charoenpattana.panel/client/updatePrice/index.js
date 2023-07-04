@@ -45,6 +45,7 @@ $("#confirm").on("click", e => {
   }
 
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
+    $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
     $.get("http://mathongapi.jpn.local/price/first", rawPriceList => {
       priceList = JSON.parse(rawPriceList);
