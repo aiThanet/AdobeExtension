@@ -38,14 +38,17 @@ function startFindLink(files, folderDest) {
 }
 
 function startUpdatePrice(files, priceList) {
-  //app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   var result = {
     NotFoundPrice: [],
     UpdatedPrice: [],
     NotUpdatePrice: [],
   };
+  progress(files.length);
+
   for (var i = 0; i < files.length; i++) {
     var fileName = File(files[i]).getFileName();
+    progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
 
@@ -61,7 +64,9 @@ function startUpdatePrice(files, priceList) {
     } else {
       result.NotFoundPrice.push(fileName);
     }
+    progress.increment();
   }
-  //app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  progress.close();
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
   return JSON.lave(result);
 }
