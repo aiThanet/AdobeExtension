@@ -47,22 +47,29 @@ $("#confirm").on("click", e => {
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    $.get("http://mathongapi.jpn.local/price/first", rawPriceList => {
-      priceList = JSON.parse(rawPriceList);
-      jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
-        console.log(res);
-        data = JSON.parse(res);
+    $.ajax({
+      url: "http://mathongapi.jpn.local/price/first",
+      success: rawPriceList => {
+        priceList = JSON.parse(rawPriceList);
+        jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
+          console.log(res);
+          data = JSON.parse(res);
 
-        $("#displayBody").empty();
+          $("#displayBody").empty();
 
-        var html = "";
+          var html = "";
 
-        html += buildTable("รหัสสินค้าไม่ตรง", data.NotFoundPrice);
-        html += buildTablePrice("รหัสสินค้าที่อัพเดต", data.UpdatedPrice);
-        html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", data.NotUpdatePrice);
+          html += buildTable("รหัสสินค้าไม่ตรง", data.NotFoundPrice);
+          html += buildTablePrice("รหัสสินค้าที่อัพเดต", data.UpdatedPrice);
+          html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", data.NotUpdatePrice);
 
-        $("#displayBody")[0].innerHTML = html;
-      });
+          $("#displayBody")[0].innerHTML = html;
+        });
+      },
+      error: err => {
+        alert("ลองใหม่อีกครั้ง: " + err.statusText);
+      },
+      timeout: 5000,
     });
     return;
   }

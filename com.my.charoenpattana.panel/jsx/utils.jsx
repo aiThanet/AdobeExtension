@@ -364,8 +364,7 @@ function progress(steps) {
 function getPriceText(rawPriceText) {
   rawPriceText = rawPriceText.replace("\u0e23\u0e32\u0e04\u0e32", "");
   rawPriceText = rawPriceText.replace(" ", "");
-  rawPriceText = rawPriceText.replace(".", "");
-  rawPriceText = rawPriceText.replace("-", "");
+  rawPriceText = rawPriceText.replace(".-", "");
   return rawPriceText;
 }
 
@@ -380,11 +379,12 @@ function updatePrice(fileRef, newPrice) {
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
       currentPriceText = getPriceText(content);
-      currentPrice = parseInt(currentPriceText.replace(/\D/g, ""));
+      currentPrice = parseFloat(currentPriceText);
 
       if (currentPrice != newPrice) {
         app.findTextPreferences = app.changeTextPreferences = null;
         app.findTextPreferences.findWhat = content;
+        // current logic only support up to 3 decimal place
         newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
