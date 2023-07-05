@@ -47,7 +47,8 @@ function startUpdatePrice(files, priceList) {
   progress(files.length);
 
   for (var i = 0; i < files.length; i++) {
-    var fileName = File(files[i]).getFileName();
+    var file = File(files[i]);
+    var fileName = file.getFileName();
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
@@ -65,7 +66,7 @@ function startUpdatePrice(files, priceList) {
       result.NotFoundPrice.push(fileName);
     }
     progress.increment();
-    fileName.close();
+    file.close();
   }
   progress.close();
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
