@@ -69,7 +69,7 @@ $("#confirm").on("click", e => {
       error: err => {
         alert("ลองใหม่อีกครั้ง: " + err.statusText);
       },
-      timeout: 5000,
+      timeout: 30000,
     });
     return;
   }
