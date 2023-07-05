@@ -4,8 +4,8 @@
   var missingLink = moveLink(file);
   var f = File(file);
   fileName = f.getFileNameWithExtension();
+  f.close();
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
-
   return JSON.lave(missingLink);
 }
 
@@ -18,6 +18,7 @@ function startChangeName(files, srcName, destName) {
     var file = File(files[i]);
     fileName = file.getFileNameWithExtension();
     missing[fileName] = res[0];
+    file.close();
   }
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
   return JSON.lave(missing);
@@ -31,6 +32,7 @@ function startFindLink(files, folderDest) {
     var file = File(files[i]);
     fileName = file.getFileNameWithExtension();
     missing[fileName] = missingLink;
+    file.close();
   }
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
 

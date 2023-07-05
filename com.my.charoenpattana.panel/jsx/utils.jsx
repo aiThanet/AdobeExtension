@@ -92,11 +92,13 @@ function changeName(fileRef, srcName, destName) {
 
   var newFileName = file.getFileName().replace(srcName, destName);
   var newFile = File(file.getFolderPath() + "/" + newFileName + "." + file.getFileExtension());
+  var newFilePath = newFile.getFullPath();
 
   doc.save(newFile);
   doc.close();
+  newFile.close();
   file.remove();
-  return [missingLink, newFile];
+  return [missingLink, newFilePath];
 }
 
 function renameFile(file, srcName, destName) {
@@ -166,12 +168,15 @@ function moveLinkTo(fileRef, destFolder, level) {
           }
         }
         link.update();
+        targetFile.close();
       }
     } else {
       missing[file.getFileNameWithExtension()].push(linkFile.getFullPath());
     }
 
     if (level == 1) progress.increment();
+
+    linkFile.close();
   }
 
   doc.save(file);
@@ -205,7 +210,9 @@ function moveLink(fileRef) {
     var links = doc.links;
     for (i = 0; i < links.length; i++) {
       var link = links[i];
-      link_array.push(File(link.filePath).getFullPath());
+      var t_file = File(link.filePath);
+      link_array.push(t_file.getFullPath());
+      t_file.close();
     }
     doc.close();
 
@@ -215,7 +222,7 @@ function moveLink(fileRef) {
       }
     }
   }
-
+  file.close();
   return [missing, notUsedFiles];
 }
 
@@ -299,9 +306,11 @@ function findLink(fileRef, findFolder) {
         }
       }
     }
+    linkFile.close();
   }
 
   doc.save(file);
+  file.close();
 
   if (missingLink.length == 0) {
     doc.close();
