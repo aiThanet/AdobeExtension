@@ -54,9 +54,28 @@ function startUpdatePrice(files, priceList) {
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
+    var tempName2 = fileName.replace("HG", "IG");
 
-    if (fileName in priceList || tempName in priceList) {
-      newPrice = fileName in priceList ? parseFloat(priceList[fileName]) : parseFloat(priceList[tempName]); //temporary fix rename from HG to V mismatch between catalog and system
+    if (fileName in priceList) {
+      newPrice = parseFloat(priceList[fileName]); //temporary fix rename from HG to V mismatch between catalog and system
+      var oldPrice = updatePrice(files[i], newPrice);
+      var row = [fileName, oldPrice, newPrice];
+      if (oldPrice == newPrice) {
+        result.NotUpdatePrice.push(row);
+      } else {
+        result.UpdatedPrice.push(row);
+      }
+    } else if (tempName in priceList) {
+      newPrice = parseFloat(priceList[tempName]); //temporary fix rename from HG to V mismatch between catalog and system
+      var oldPrice = updatePrice(files[i], newPrice);
+      var row = [fileName, oldPrice, newPrice];
+      if (oldPrice == newPrice) {
+        result.NotUpdatePrice.push(row);
+      } else {
+        result.UpdatedPrice.push(row);
+      }
+    } else if (tempName2 in priceList) {
+      newPrice = parseFloat(priceList[tempName2]); //temporary fix rename from HG to V mismatch between catalog and system
       var oldPrice = updatePrice(files[i], newPrice);
       var row = [fileName, oldPrice, newPrice];
       if (oldPrice == newPrice) {

@@ -388,7 +388,7 @@ function updatePrice(fileRef, newPrice) {
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
       currentPriceText = getPriceText(content);
-      currentPrice = parseFloat(currentPriceText);
+      currentPrice = parseFloat(currentPriceText.replace(",", ""));
 
       if (currentPrice != newPrice) {
         app.findTextPreferences = app.changeTextPreferences = null;
