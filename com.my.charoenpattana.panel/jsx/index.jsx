@@ -65,6 +65,7 @@ function startUpdatePrice(files, priceList) {
       result.NotFoundPrice.push(fileName);
     }
     progress.increment();
+    fileName.close();
   }
   progress.close();
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;

@@ -389,13 +389,11 @@ function updatePrice(fileRef, newPrice) {
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
       }
-      doc.save(file);
-      doc.close();
-      return currentPrice;
     }
   }
 
   doc.save(file);
   doc.close();
+  file.close();
   return currentPrice;
 }
