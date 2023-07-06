@@ -1,4 +1,4 @@
-Array.prototype.includes = function (obj) {
+﻿Array.prototype.includes = function (obj) {
   var i = this.length;
   while (i--) {
     if (this[i] === obj) {
@@ -47,7 +47,7 @@ function createImageFolder(path) {
   return true;
 }
 
-function changeName(fileRef, srcName, destName) {
+function changeName(fileRef, srcName, destName, level) {
   var file = File(fileRef);
   var doc = app.open(file);
   var missingLink = [];
@@ -57,17 +57,24 @@ function changeName(fileRef, srcName, destName) {
   app.changeTextPreferences.changeTo = destName;
   doc.changeText();
 
+  if (level == 1) {
+    progress(doc.links.length);
+  }
+
   for (var d = 0; d < doc.links.length; d++) {
     var link = doc.links[d];
+    var linkFile = File(link.filePath);
+    if (level == 1) {
+      progress.message(d + 1 + " / " + doc.links.length + " : " + linkFile.getFileNameWithExtension());
+    }
     if (link.status == LinkStatus.NORMAL) {
-      var linkFile = File(link.filePath);
       if (linkFile.getFileExtension() == "ai") {
         linkFile.close();
         continue;
       }
       var linkExtension = linkFile.getFileExtension();
       if (linkExtension == "indd") {
-        var res = changeName(linkFile.getFullPath(), srcName, destName);
+        var res = changeName(linkFile.getFullPath(), srcName, destName, level + 1);
         missingLink = missingLink.concat(res[0]);
         var reLinkFile = File(res[1]);
         link.relink(reLinkFile);
@@ -88,12 +95,14 @@ function changeName(fileRef, srcName, destName) {
           link.relink(linkFile);
         }
       }
-      linkFile.close();
     } else if (link.status == LinkStatus.LINK_OUT_OF_DATE) {
       link.update();
     } else if (link.status == LinkStatus.LINK_MISSING) {
       missingLink.push(link.filePath);
     }
+    linkFile.close();
+
+    if (level == 1) progress.increment();
   }
 
   var newFileName = file.getFileName().replace(srcName, destName);
@@ -104,6 +113,8 @@ function changeName(fileRef, srcName, destName) {
   doc.close();
   newFile.close();
   file.remove();
+
+  if (level == 1) progress.close();
   return [missingLink, newFilePath];
 }
 
@@ -414,7 +425,6 @@ function updatePrice(fileRef, newPrice) {
     }
   }
 
-  
   doc.close();
   file.close();
   return currentPrice;

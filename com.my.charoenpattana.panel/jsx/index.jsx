@@ -14,7 +14,7 @@ function startChangeName(files, srcName, destName) {
 
   var missing = {};
   for (var i = 0; i < files.length; i++) {
-    var res = changeName(files[i], srcName, destName);
+    var res = changeName(files[i], srcName, destName, 1);
     var file = File(files[i]);
     fileName = file.getFileNameWithExtension();
     missing[fileName] = res[0];
@@ -53,7 +53,7 @@ function startUpdatePrice(files, priceList) {
     var fileName = file.getFileName();
 
     // since filename can't use slash we will 'underscore' instead
-    fileName = fileName.replace("_","/").trim();
+    fileName = fileName.replace("_", "/").trim();
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
@@ -74,7 +74,7 @@ function startUpdatePrice(files, priceList) {
       result.NotFoundPrice.push(fileName);
       priceNotFound = true;
     }
-    if(!priceNotFound) {
+    if (!priceNotFound) {
       var oldPrice = updatePrice(files[i], newPrice);
       var row = [fileName, oldPrice, newPrice];
       if (oldPrice == newPrice) {
