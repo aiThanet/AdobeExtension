@@ -53,7 +53,7 @@ function startUpdatePrice(files, priceList) {
     var fileName = file.getFileName();
 
     // since filename can't use slash we will 'underscore' instead
-    fileName = fileName.replace("_","/")
+    fileName = fileName.replace("_","/").trim();
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
