@@ -397,11 +397,12 @@ function updatePrice(fileRef, newPrice) {
         newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
+        doc.save(file);
       }
     }
   }
 
-  doc.save(file);
+  
   doc.close();
   file.close();
   return currentPrice;
