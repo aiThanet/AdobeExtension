@@ -58,7 +58,7 @@ function startUpdatePrice(files, priceList) {
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
     var tempName2 = fileName.replace("HG", "IG");
-    var tempName3 = "HG-" + fileName
+    var tempName3 = fileName.replace("HG-", "");
 
     if (fileName in priceList) {
       newPrice = parseFloat(priceList[fileName]); //temporary fix rename from HG to V mismatch between catalog and system
