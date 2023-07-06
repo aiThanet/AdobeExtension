@@ -382,6 +382,7 @@ function progress(steps) {
 }
 
 function getPriceText(rawPriceText) {
+  rawPriceText = rawPriceText.replace("\u0e23\u0e32\u0e04\u0e32\u0e0a\u0e38\u0e14\u0e25\u0e30", "");
   rawPriceText = rawPriceText.replace("\u0e23\u0e32\u0e04\u0e32", "");
   rawPriceText = rawPriceText.replace(" ", "");
   rawPriceText = rawPriceText.replace(".-", "");
@@ -408,11 +409,12 @@ function updatePrice(fileRef, newPrice) {
         newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
+        doc.save(file);
       }
     }
   }
 
-  doc.save(file);
+  
   doc.close();
   file.close();
   return currentPrice;
