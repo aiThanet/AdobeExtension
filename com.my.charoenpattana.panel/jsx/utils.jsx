@@ -61,11 +61,17 @@ function changeName(fileRef, srcName, destName) {
     var link = doc.links[d];
     if (link.status == LinkStatus.NORMAL) {
       var linkFile = File(link.filePath);
+      if (linkFile.getFileExtension() == "ai") {
+        linkFile.close();
+        continue;
+      }
       var linkExtension = linkFile.getFileExtension();
       if (linkExtension == "indd") {
         var res = changeName(linkFile.getFullPath(), srcName, destName);
         missingLink = missingLink.concat(res[0]);
-        link.relink(res[1]);
+        var reLinkFile = File(res[1]);
+        link.relink(reLinkFile);
+        reLinkFile.close();
       } else {
         renameFile(linkFile, srcName, destName);
 
@@ -81,8 +87,8 @@ function changeName(fileRef, srcName, destName) {
         } else {
           link.relink(linkFile);
         }
-        linkFile.close();
       }
+      linkFile.close();
     } else if (link.status == LinkStatus.LINK_OUT_OF_DATE) {
       link.update();
     } else if (link.status == LinkStatus.LINK_MISSING) {
@@ -130,6 +136,11 @@ function moveLinkTo(fileRef, destFolder, level) {
 
     if (level == 1) {
       progress.message(i + " / " + links.length + " : " + linkFile.getFileNameWithExtension());
+    }
+
+    if (file.getFileName().toLowerCase().indexOf("all") != -1 && linkExtension != "indd") {
+      if (level == 1) progress.increment();
+      continue;
     }
 
     if (link.status != LinkStatus.LINK_MISSING) {
