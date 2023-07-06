@@ -51,10 +51,14 @@ function startUpdatePrice(files, priceList) {
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
     var fileName = file.getFileName();
+
+    // since filename can't use slash we will 'underscore' instead
+    fileName = fileName.replace("_","/")
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
     // temporary fix rename from HG to V mismatch between catalog and system
     var tempName = fileName.replace("HG", "V");
     var tempName2 = fileName.replace("HG", "IG");
+    var tempName3 = "HG-" + fileName
 
     if (fileName in priceList) {
       newPrice = parseFloat(priceList[fileName]); //temporary fix rename from HG to V mismatch between catalog and system
@@ -76,6 +80,15 @@ function startUpdatePrice(files, priceList) {
       }
     } else if (tempName2 in priceList) {
       newPrice = parseFloat(priceList[tempName2]); //temporary fix rename from HG to V mismatch between catalog and system
+      var oldPrice = updatePrice(files[i], newPrice);
+      var row = [fileName, oldPrice, newPrice];
+      if (oldPrice == newPrice) {
+        result.NotUpdatePrice.push(row);
+      } else {
+        result.UpdatedPrice.push(row);
+      }
+    } else if (tempName3 in priceList) {
+      newPrice = parseFloat(priceList[tempName3]); //temporary fix rename from HG to V mismatch between catalog and system
       var oldPrice = updatePrice(files[i], newPrice);
       var row = [fileName, oldPrice, newPrice];
       if (oldPrice == newPrice) {
