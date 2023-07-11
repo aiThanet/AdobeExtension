@@ -51,6 +51,8 @@ function changeName(fileRef, srcName, destName, level) {
   var file = File(fileRef);
   var doc = app.open(file);
   var missingLink = [];
+  var pathSrcName = srcName.replace("/", "_");
+  var pathDestName = destName.replace("/", "_");
 
   app.findTextPreferences = app.changeTextPreferences = null;
   app.findTextPreferences.findWhat = srcName;
@@ -80,13 +82,13 @@ function changeName(fileRef, srcName, destName, level) {
         link.relink(reLinkFile);
         reLinkFile.close();
       } else {
-        renameFile(linkFile, srcName, destName);
+        renameFile(linkFile, pathSrcName, pathDestName);
 
         var folderPath = linkFile.getFolderPath();
 
         // rename folder only in image folder
         if (folderPath.indexOf("image") != -1) {
-          var folderName = linkFile.getParentDirectoryName().replace(srcName, destName);
+          var folderName = linkFile.getParentDirectoryName().replace(pathSrcName, pathDestName);
           var newFolder = Folder(folderPath);
           newFolder.rename(folderName);
           var newFile = File(newFolder.fsName + "/" + linkFile.getFileNameWithExtension());
@@ -105,7 +107,7 @@ function changeName(fileRef, srcName, destName, level) {
     if (level == 1) progress.increment();
   }
 
-  var newFileName = file.getFileName().replace(srcName, destName);
+  var newFileName = file.getFileName().replace(pathSrcName, pathDestName);
   var newFile = File(file.getFolderPath() + "/" + newFileName + "." + file.getFileExtension());
   var newFilePath = newFile.getFullPath();
 
