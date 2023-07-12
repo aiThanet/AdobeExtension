@@ -31,6 +31,7 @@ $("#confirm").on("click", e => {
   if (confirm(`ต้องการ Export PDF หรือไม่`)) {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
+    files.sort()
     jsx.evalScript(`startExportPDF(${JSON.stringify(files)})`, res => {
       console.log(res);
       data = JSON.parse(res);
