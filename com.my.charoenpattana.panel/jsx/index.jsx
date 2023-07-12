@@ -63,13 +63,13 @@ function startUpdatePrice(files, priceList) {
     var priceNotFound = false;
     var newPrice = 0;
     if (fileName in priceList) {
-      newPrice = parseFloat(priceList[fileName]); //temporary fix rename from HG to V mismatch between catalog and system
+      newPrice = parseFloat(priceList[fileName]["price"]); //temporary fix rename from HG to V mismatch between catalog and system
     } else if (tempName in priceList) {
-      newPrice = parseFloat(priceList[tempName]); //temporary fix rename from HG to V mismatch between catalog and system
+      newPrice = parseFloat(priceList[tempName]["price"]); //temporary fix rename from HG to V mismatch between catalog and system
     } else if (tempName2 in priceList) {
-      newPrice = parseFloat(priceList[tempName2]); //temporary fix rename from HG to V mismatch between catalog and system
+      newPrice = parseFloat(priceList[tempName2]["price"]); //temporary fix rename from HG to V mismatch between catalog and system
     } else if (tempName3 in priceList) {
-      newPrice = parseFloat(priceList[tempName3]); //temporary fix rename from HG to V mismatch between catalog and system
+      newPrice = parseFloat(priceList[tempName3]["price"]); //temporary fix rename from HG to V mismatch between catalog and system
     } else {
       result.NotFoundPrice.push(fileName);
       priceNotFound = true;
