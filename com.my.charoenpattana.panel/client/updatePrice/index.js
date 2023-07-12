@@ -33,11 +33,6 @@ var buildTablePrice = (name, files) => {
   return html;
 };
 
-var priceList = {
-  "HG260-07": 199,
-  "HG260-08": 60,
-}; // TODO: call price api
-
 $("#confirm").on("click", e => {
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
