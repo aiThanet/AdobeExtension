@@ -90,3 +90,26 @@ function startUpdatePrice(files, priceList) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
   return JSON.lave(result);
 }
+
+function startExportPDF(files) {
+  var outputFolder = Folder.selectDialog("Select output folder");
+  var outputPathPath = outputFolder.fsName;
+  var missing = {};
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  progress(files.length);
+
+  for (var i = 0; i < files.length; i++) {
+    var file = File(files[i]);
+    var fileName = file.getFileName();
+
+    progress.message(i + 1 + " / " + files.length + " : " + fileName);
+    var missingLink = exportPDF(file, outputPathPath);
+    if (missingLink.length > 0) missing[fileName] = missingLink;
+
+    progress.increment();
+    file.close();
+  }
+  progress.close();
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  return JSON.lave(missing);
+}

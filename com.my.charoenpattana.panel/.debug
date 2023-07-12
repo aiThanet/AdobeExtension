@@ -20,4 +20,9 @@
       <Host Name="IDSN" Port="8094" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.exportPDFPanel">
+    <HostList>
+      <Host Name="IDSN" Port="8095" />
+    </HostList>
+  </Extension>
 </ExtensionList>

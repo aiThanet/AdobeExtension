@@ -251,12 +251,16 @@ function moveLink(fileRef) {
 }
 
 function updateAllOutdatedLinks(doc) {
+  var missingLink = [];
   for (var d = 0; d < doc.links.length; d++) {
     var link = doc.links[d];
     if (link.status == LinkStatus.LINK_OUT_OF_DATE) {
       link.update();
+    } else if (link.status == LinkStatus.LINK_MISSING) {
+      missingLink.push(link.filePath);
     }
   }
+  return missingLink;
 }
 
 function reLink(doc, folderPath, extension) {
@@ -366,7 +370,7 @@ function progress(steps) {
 
   var w;
 
-  w = new Window("palette", "Progress", undefined, { closeButton: false });
+  w = new Window("palette", "Progress", undefined, { closeButton: true });
 
   t = w.add("statictext", undefined, undefined, { name: "text_progress" });
 
@@ -430,4 +434,18 @@ function updatePrice(fileRef, newPrice) {
   doc.close();
   file.close();
   return currentPrice;
+}
+
+function exportPDF(file, outputPath) {
+  var doc = app.open(file);
+  var missingLink = updateAllOutdatedLinks(doc);
+  var folderPath = file.getFolderPath();
+  var relativePath = folderPath.split("\\Catalog2023\\")[1];
+  var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
+
+  var destFile = File(outputPath + "/" + newFileName + ".pdf");
+  doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
+  destFile.close();
+  doc.close();
+  return missingLink;
 }
