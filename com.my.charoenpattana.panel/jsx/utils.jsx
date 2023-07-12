@@ -446,6 +446,7 @@ function exportPDF(file, outputPath) {
   var destFile = File(outputPath + "/" + newFileName + ".pdf");
   doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
   destFile.close();
+  doc.save(file);
   doc.close();
   return missingLink;
 }
