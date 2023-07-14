@@ -444,7 +444,10 @@ function exportPDF(file, outputPath) {
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
   var destFile = File(outputPath + "/" + newFileName + ".pdf");
-  doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
+
+  if (!destFile.exists) {
+    doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
+  }
   destFile.close();
   doc.save(file);
   doc.close();
