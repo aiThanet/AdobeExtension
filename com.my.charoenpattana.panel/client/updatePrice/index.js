@@ -44,8 +44,7 @@ $("#confirm").on("click", e => {
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
     $.ajax({
       url: "http://mathongapi.jpn.local/price/first",
-      success: rawPriceList => {
-        priceList = JSON.parse(rawPriceList);
+      success: priceList => {
         jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
           console.log(res);
           data = JSON.parse(res);
