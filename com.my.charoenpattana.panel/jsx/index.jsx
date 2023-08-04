@@ -113,3 +113,9 @@ function startExportPDF(files) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
   return JSON.lave(missing);
 }
+
+function startMoveItem(goodCode) {
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  moveAfterItem(goodCode);
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+}

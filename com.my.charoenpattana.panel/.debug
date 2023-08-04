@@ -25,4 +25,9 @@
       <Host Name="IDSN" Port="8095" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.moveItemPanel">
+    <HostList>
+      <Host Name="IDSN" Port="8096" />
+    </HostList>
+  </Extension>
 </ExtensionList>

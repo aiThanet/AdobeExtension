@@ -8,6 +8,29 @@
   return false;
 };
 
+Array.prototype.indexOf = function (obj) {
+  var i = this.length;
+  while (i--) {
+    if (this[i] === obj) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+Array.prototype.indexOfMinimum = function () {
+  var i = this.length;
+  var min_val = 999999999;
+  var min_idx = -1;
+  while (i--) {
+    if (this[i] < min_val) {
+      min_val = this[i];
+      min_idx = i;
+    }
+  }
+  return min_idx;
+};
+
 /* Get full path of file */
 File.prototype.getFullPath = function () {
   return this.fsName;
@@ -449,4 +472,122 @@ function exportPDF(file, outputPath) {
   doc.save(file);
   doc.close();
   return missingLink;
+}
+
+var X_POS = [4.5, 55.5, 106.5, 157.5];
+var Y_POS = [53, 92, 131, 170, 209, 248];
+
+function getLinkPosition(doc, link) {
+  link.show();
+  var aSel = doc.selection[0];
+  var SelBounds = aSel.geometricBounds;
+  var y = SelBounds[0];
+  var x = SelBounds[1];
+  var page = Number(aSel.parentPage.name);
+  return [y, x, page];
+}
+
+function moveAfterItem(itemCode) {
+  var doc = app.activeDocument;
+  doc.documentPreferences.facingPages = false;
+
+  var after_x = 0;
+  var after_y = 0;
+  var after_page = 0;
+  var moveItems = [];
+  var isFound = false;
+
+  var links = doc.links;
+
+  // Find Postion of Move Item
+  for (i = 0; i < links.length; i++) {
+    var link = links[i];
+    var linkFile = File(link.filePath);
+    var linkName = linkFile.getFileName();
+    var linkExtension = linkFile.getFileExtension();
+
+    if (linkName.indexOf(itemCode) != -1 && linkExtension == "indd") {
+      var info = getLinkPosition(doc, link);
+      after_y = info[0];
+      after_x = info[1];
+      after_page = info[2];
+      isFound = true;
+      break;
+    }
+    linkFile.close();
+  }
+
+  if (!isFound) {
+    return false;
+  }
+
+  // Find Movalbe Item by comparing position
+  for (i = 0; i < links.length; i++) {
+    var link = links[i];
+    var linkFile = File(link.filePath);
+    var linkName = linkFile.getFileName();
+    var linkExtension = linkFile.getFileExtension();
+    if (linkExtension == "indd") {
+      var info = getLinkPosition(doc, link);
+      y = info[0];
+      x = info[1];
+      page = info[2];
+
+      if (page > after_page || (page == after_page && ((x - after_x > 5 && y == after_y) || y - after_y > 5))) {
+        moveItems.push(link);
+      }
+    }
+    linkFile.close();
+  }
+
+  for (var i = 0; i < moveItems.length; i++) {
+    moveToNextPosition(doc, moveItems[i]);
+  }
+
+  doc.documentPreferences.facingPages = true;
+  return true;
+}
+
+function moveToNextPosition(doc, link) {
+  var parent = link;
+  var linkFile = File(link.filePath);
+  var linkName = linkFile.getFileName();
+
+  while (!(parent.parent instanceof Spread)) {
+    parent = parent.parent;
+  }
+
+  if (parent instanceof Link) {
+    parent.show();
+    var aSel = doc.selection[0];
+  } else {
+    var aSel = parent;
+  }
+  var SelBounds = aSel.geometricBounds;
+  y = SelBounds[0];
+  x = SelBounds[1];
+  check_x = [];
+  check_y = [];
+  for (var i = 0; i < X_POS.length; i++) {
+    check_x.push(Math.abs(X_POS[i] - x));
+  }
+  for (var i = 0; i < Y_POS.length; i++) {
+    check_y.push(Math.abs(Y_POS[i] - y));
+  }
+  var minIndex_x = check_x.indexOfMinimum();
+  var minIndex_y = check_y.indexOfMinimum();
+
+  if (minIndex_x == check_x.length - 1) {
+    if (minIndex_y != check_y.length - 1) {
+      parent.move(Array(X_POS[0], Y_POS[minIndex_y + 1]));
+    } else {
+      cur_page = Number(parent.parentPage.name);
+      if (Number(cur_page) < doc.pages.length) {
+        parent.move(doc.pages[Number(cur_page)]);
+        parent.move(Array(X_POS[0], Y_POS[0]));
+      }
+    }
+  } else {
+    parent.move(Array(X_POS[minIndex_x + 1], y));
+  }
 }

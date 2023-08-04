@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Move Item Panel</title>
+    <link rel="stylesheet" href="../../css/mystyle.css" />
+  </head>
+  <body>
+    <!-- 1) Simple HTML UI elements to get us started -->
+    <div class="container-fluid">
+      <div class="row mx-1 my-2"><button id="restartExt" class="btn btn-secondary">รีเซ็ต</button></div>
+    </div>
+
+    <div class="container-fluid" id="displayBody">
+      <div class="row mx-1 my-2"><h1>โปรแกรมขยับรูป</h1></div>
+
+      <div class="row mx-1 my-1">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">รูปตั้งต้นที่ต้องการขยับ</span>
+          </div>
+          <input type="text" id="goodcode" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" />
+        </div>
+      </div>
+
+      <div class="row mx-1"><button id="confirm" class="btn btn-primary">ตกลง</button></div>
+    </div>
+
+    <script type="text/javascript" src="../../js/lib/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" src="../../js/lib/JSX.js"></script>
+    <script type="text/javascript" src="../../js/myutil.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
+</html>
