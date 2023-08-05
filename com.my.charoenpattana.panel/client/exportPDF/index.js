@@ -38,11 +38,7 @@ $("#confirm").on("click", e => {
 
       $("#displayBody").empty();
 
-      var html = "";
-
-      for (k in data) {
-        html += buildTable(k, data[k]);
-      }
+      var html = buildTable('ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ', data);
 
       $("#displayBody")[0].innerHTML = html;
     });
