@@ -460,41 +460,42 @@ function updatePrice(fileRef, newPrice) {
 }
 
 function exportPDF(file, outputPath) {
-  var doc = app.open(file);
+  
   var missingLink = updateAllOutdatedLinks(doc);
   var folderPath = file.getFolderPath();
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
-  var maxPage = 1;
-  var links = doc.links;
-
-  // Find Maximum Page
-  for (i = 0; i < links.length; i++) {
-    var link = links[i];
-    var linkFile = File(link.filePath);
-    var linkExtension = linkFile.getFileExtension();
-
-    if (linkExtension == "indd") {
-      link.show();
-      var aSel = doc.selection[0];
-      var page = Number(aSel.parentPage.name);
-      maxPage = Math.max(maxPage, page);
-    }
-
-    linkFile.close();
-  }
-
-  app.pdfExportPreferences.pageRange = "1-" + maxPage;
-
   var destFile = File(outputPath + "/" + newFileName + ".pdf");
-
   if (!destFile.exists) {
+    var doc = app.open(file);
+  
+    var maxPage = 1;
+    var links = doc.links;
+  
+    // Find Maximum Page
+    for (i = 0; i < links.length; i++) {
+      var link = links[i];
+      var linkFile = File(link.filePath);
+      var linkExtension = linkFile.getFileExtension();
+  
+      if (linkExtension == "indd") {
+        link.show();
+        var aSel = doc.selection[0];
+        var page = Number(aSel.parentPage.name);
+        maxPage = Math.max(maxPage, page);
+      }
+  
+      linkFile.close();
+    }
+  
+    app.pdfExportPreferences.pageRange = "1-" + maxPage;
     doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
+
+    doc.save(file);
+    doc.close();
   }
   destFile.close();
-  doc.save(file);
-  doc.close();
   return missingLink;
 }
 
