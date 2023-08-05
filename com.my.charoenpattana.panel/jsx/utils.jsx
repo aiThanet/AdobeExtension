@@ -466,6 +466,27 @@ function exportPDF(file, outputPath) {
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
+  var maxPage = 1;
+  var links = doc.links;
+
+  // Find Maximum Page
+  for (i = 0; i < links.length; i++) {
+    var link = links[i];
+    var linkFile = File(link.filePath);
+    var linkExtension = linkFile.getFileExtension();
+
+    if (linkExtension == "indd") {
+      link.show();
+      var aSel = doc.selection[0];
+      var page = Number(aSel.parentPage.name);
+      maxPage = Math.max(maxPage, page);
+    }
+
+    linkFile.close();
+  }
+
+  app.pdfExportPreferences.pageRange = "1-" + maxPage;
+
   var destFile = File(outputPath + "/" + newFileName + ".pdf");
 
   if (!destFile.exists) {
@@ -553,8 +574,6 @@ function moveAfterItem(itemCode) {
 
 function moveToNextPosition(doc, link) {
   var parent = link;
-  var linkFile = File(link.filePath);
-  var linkName = linkFile.getFileName();
 
   while (!(parent.parent instanceof Spread)) {
     parent = parent.parent;
