@@ -460,8 +460,7 @@ function updatePrice(fileRef, newPrice) {
 }
 
 function exportPDF(file, outputPath) {
-  
-  var missingLink = updateAllOutdatedLinks(doc);
+  var notSavingFiles = []
   var folderPath = file.getFolderPath();
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
@@ -469,6 +468,7 @@ function exportPDF(file, outputPath) {
   var destFile = File(outputPath + "/" + newFileName + ".pdf");
   if (!destFile.exists) {
     var doc = app.open(file);
+    var missingLink = updateAllOutdatedLinks(doc);
   
     var maxPage = 1;
     var links = doc.links;
@@ -494,9 +494,11 @@ function exportPDF(file, outputPath) {
 
     doc.save(file);
     doc.close();
+  } else {
+    notSavingFiles.push(destFile.getFileName())
   }
   destFile.close();
-  return missingLink;
+  return notSavingFiles;
 }
 
 var X_POS = [4.5, 55.5, 106.5, 157.5];
