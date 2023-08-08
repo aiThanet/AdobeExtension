@@ -460,7 +460,7 @@ function updatePrice(fileRef, newPrice) {
 }
 
 function exportPDF(file, outputPath) {
-  var notSavingFiles = []
+  var notSavingFiles = "";
   var folderPath = file.getFolderPath();
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
@@ -469,33 +469,33 @@ function exportPDF(file, outputPath) {
   if (!destFile.exists) {
     var doc = app.open(file);
     var missingLink = updateAllOutdatedLinks(doc);
-  
+
     var maxPage = 1;
     var links = doc.links;
-  
+
     // Find Maximum Page
     for (i = 0; i < links.length; i++) {
       var link = links[i];
       var linkFile = File(link.filePath);
       var linkExtension = linkFile.getFileExtension();
-  
+
       if (linkExtension == "indd") {
         link.show();
         var aSel = doc.selection[0];
         var page = Number(aSel.parentPage.name);
         maxPage = Math.max(maxPage, page);
       }
-  
+
       linkFile.close();
     }
-  
+
     app.pdfExportPreferences.pageRange = "1-" + maxPage;
     doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
 
     doc.save(file);
     doc.close();
   } else {
-    notSavingFiles.push(destFile.getFileName())
+    notSavingFiles = destFile.getFileName();
   }
   destFile.close();
   return notSavingFiles;
@@ -615,4 +615,50 @@ function moveToNextPosition(doc, link) {
   } else {
     parent.move(Array(X_POS[minIndex_x + 1], y));
   }
+}
+
+function fixBleed(file) {
+  var doc = app.open(file);
+  var bleedPoint = 3;
+
+  doc.documentPreferences.facingPages = false;
+
+  doc.documentPreferences.properties = {
+    documentBleedUniformSize: true,
+    documentBleedTopOffset: bleedPoint + " mm",
+  };
+
+  var links = doc.links;
+
+  for (i = 0; i < links.length; i++) {
+    var link = links[i];
+    var linkFile = File(link.filePath);
+
+    if (linkFile.getFileNameWithExtension() == "P02.ai") {
+      if (link.status == LinkStatus.LINK_OUT_OF_DATE) {
+        link.update();
+      }
+
+      var parent = link;
+      while (!(parent.parent instanceof Spread)) {
+        parent = parent.parent;
+      }
+
+      setBleed(parent, bleedPoint);
+    }
+
+    linkFile.close();
+  }
+
+  doc.save(file);
+  doc.close();
+}
+
+function setBleed(pi, bp) {
+  pi.locked = false;
+
+  pi.geometricBounds = Array(-bp, -bp, 297 + bp, 210 + bp);
+  pi.fit(FitOptions.CONTENT_TO_FRAME);
+
+  pi.locked = true;
 }

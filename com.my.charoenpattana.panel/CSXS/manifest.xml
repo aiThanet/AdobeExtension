@@ -9,6 +9,7 @@
     <Extension Id="com.my.charoenpattana.updatePricePanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.exportPDFPanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.moveItemPanel" Version="1.1.1" />
+    <Extension Id="com.my.charoenpattana.fixBleedPanel" Version="1.1.1" />
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -177,6 +178,33 @@
           <Type>Panel</Type>
           <!-- 6) -->
           <Menu>6. Charoenpattana Library - Move Item</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>750</Height>
+              <Width>400</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.my.charoenpattana.fixBleedPanel">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/fixBleed/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>7. Charoenpattana Library - Fix Bleed</Menu>
           <Geometry>
             <Size>
               <!-- 7) -->
