@@ -686,8 +686,7 @@ function exportImage(file, outputPath, lastModified) {
 
     doc.exportFile(ExportFormat.JPG, destFile);
 
-    doc.save(file);
-    doc.close();
+    doc.close(SaveOptions.NO);
   } else {
     notSavingFiles = destFile.getFileName();
   }
