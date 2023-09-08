@@ -668,9 +668,8 @@ function exportImage(file, outputPath, lastModified) {
   var newFileName = file.getFileName();
 
   var destFile = File(outputPath + "/" + newFileName + ".jpg");
-  var destModifiedTime = destFile.modified.getTime() + 5000;
 
-  if (!destFile.exists || (destFile.exists && lastModified >= destModifiedTime)) {
+  if (!destFile.exists || (destFile.exists && lastModified >= (destFile.modified.getTime() + 5000))) {
     var doc = app.open(file);
     updateAllOutdatedLinks(doc);
 
