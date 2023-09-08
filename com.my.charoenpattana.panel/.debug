@@ -35,4 +35,9 @@
       <Host Name="IDSN" Port="8097" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.exportImagePanel">
+    <HostList>
+      <Host Name="IDSN" Port="8098" />
+    </HostList>
+  </Extension>
 </ExtensionList>

@@ -662,3 +662,35 @@ function setBleed(pi, bp) {
 
   pi.locked = true;
 }
+
+function exportImage(file, outputPath, lastModified) {
+  var notSavingFiles = "";
+  var newFileName = file.getFileName();
+
+  var destFile = File(outputPath + "/" + newFileName + ".jpg");
+  var destModifiedTime = destFile.modified.getTime() + 5000;
+
+  if (!destFile.exists || (destFile.exists && lastModified >= destModifiedTime)) {
+    var doc = app.open(file);
+    updateAllOutdatedLinks(doc);
+
+    app.jpegExportPreferences.properties = {
+      antiAlias: true,
+      embedColorProfile: true,
+      exportResolution: 600,
+      jpegColorSpace: JpegColorSpaceEnum.RGB,
+      jpegQuality: JPEGOptionsQuality.MAXIMUM,
+      jpegExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
+      pageString: "1",
+    };
+
+    doc.exportFile(ExportFormat.JPG, destFile);
+
+    doc.save(file);
+    doc.close();
+  } else {
+    notSavingFiles = destFile.getFileName();
+  }
+  destFile.close();
+  return notSavingFiles;
+}

@@ -139,3 +139,48 @@ function startFixBleed(files) {
 
   return "";
 }
+
+function startExportImage(files, lastModified) {
+  var outputFolder = Folder.selectDialog("Select output folder");
+  var outputPathPath = outputFolder.fsName;
+  var notSavingFiles = [];
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  progress(files.length);
+
+  for (var i = 0; i < files.length; i++) {
+    var file = File(files[i]);
+    var fileName = file.getFileName();
+
+    progress.message(i + 1 + " / " + files.length + " : " + fileName);
+
+    var notSavingFile = exportImage(file, outputPathPath, lastModified[files[i]]);
+
+    if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
+
+    progress.increment();
+    file.close();
+  }
+  progress.close();
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+
+  var now = Date.now();
+  var rows = ["file,lastModified,now,status"];
+
+  for (var i = 0; i < files.length; i++) {
+    var file = File(files[i]);
+    var fileName = file.getFileNameWithExtension();
+    var row = [fileName, lastModified[files[i]], now, notSavingFiles.indexOf(fileName) == -1 ? "สำเร็จ" : "ไม่สำเร็จ"];
+    rows.push(row.join(","));
+    file.close();
+  }
+
+  var csvContent = rows.join("\n");
+
+  var resultFile = new File(outputPathPath + "/result.csv");
+  resultFile.encoding = "utf-8";
+  resultFile.open("w");
+  resultFile.write(csvContent);
+  resultFile.close();
+
+  return JSON.lave(notSavingFiles);
+}
