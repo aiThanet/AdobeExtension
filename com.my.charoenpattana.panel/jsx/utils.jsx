@@ -669,7 +669,7 @@ function exportImage(file, outputPath, lastModified) {
 
   var destFile = File(outputPath + "/" + newFileName + ".jpg");
 
-  if (!destFile.exists || (destFile.exists && lastModified >= (destFile.modified.getTime() + 5000))) {
+  if (!destFile.exists || (destFile.exists && lastModified >= destFile.modified.getTime() + 3000)) {
     var doc = app.open(file);
     updateAllOutdatedLinks(doc);
 

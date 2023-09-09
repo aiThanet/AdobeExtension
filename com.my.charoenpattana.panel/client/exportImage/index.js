@@ -22,7 +22,7 @@ var buildTable = (name, files) => {
   return html;
 };
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
@@ -44,15 +44,29 @@ $("#confirm").on("click", e => {
     });
 
     files.sort();
-    jsx.evalScript(`startExportImage(${JSON.stringify(files)}, ${JSON.stringify(lastModified)})`, res => {
-      console.log(res);
-      data = JSON.parse(res);
 
-      $("#displayBody").empty();
+    fileChunks = [];
+    const chunkSize = 2;
+    for (let i = 0; i < files.length; i += chunkSize) {
+      fileChunks.push(files.slice(i, i + chunkSize));
+    }
 
-      var html = buildTable("ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ, ไฟล์อัพเดตอยู่แล้ว", data);
-      $("#displayBody")[0].innerHTML = html;
+    jsx.evalScript("selectFolder()", output => {
+      var i = 0;
+
+      fileChunks.forEach(async chunks => {
+        console.log("start chunks", i++);
+        await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output})`, res => {
+          console.log("result :", res);
+          // data = JSON.parse(res);
+
+          // $("#displayBody").empty();
+          // var html = buildTable("ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ, ไฟล์อัพเดตอยู่แล้ว", data);
+          // $("#displayBody")[0].innerHTML = html;
+        });
+      });
+
+      console.log("end");
     });
-    return;
   }
 });

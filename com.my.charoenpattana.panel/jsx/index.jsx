@@ -140,9 +140,7 @@ function startFixBleed(files) {
   return "";
 }
 
-function startExportImage(files, lastModified) {
-  var outputFolder = Folder.selectDialog("Select output folder");
-  var outputPathPath = outputFolder.fsName;
+function startExportImage(files, lastModified, outputPath) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
@@ -153,7 +151,7 @@ function startExportImage(files, lastModified) {
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
 
-    var notSavingFile = exportImage(file, outputPathPath, lastModified[files[i]]);
+    var notSavingFile = exportImage(file, outputPath, lastModified[files[i]]);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
@@ -164,7 +162,7 @@ function startExportImage(files, lastModified) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
 
   var now = Date.now();
-  var rows = ["file,lastModified,now,status"];
+  var rows = [];
 
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
@@ -174,13 +172,18 @@ function startExportImage(files, lastModified) {
     file.close();
   }
 
-  var csvContent = rows.join("\n");
+  var csvContent = rows.join("\n") + "\n";
 
-  var resultFile = new File(outputPathPath + "/result.csv");
+  var resultFile = new File(outputPath + "/result.csv");
   resultFile.encoding = "utf-8";
-  resultFile.open("w");
+  resultFile.open("a");
   resultFile.write(csvContent);
   resultFile.close();
 
   return JSON.lave(notSavingFiles);
+}
+
+function selectFolder() {
+  var folder = Folder.selectDialog("Select folder");
+  return JSON.lave(folder.fsName);
 }
