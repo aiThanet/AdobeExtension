@@ -140,10 +140,15 @@ function startFixBleed(files) {
   return "";
 }
 
-function startExportImage(files, lastModified, outputPath) {
+function startExportImage(files, lastModified, outputPath, withPrice) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
+
+  outputFolder = Folder(outputPath);
+  if (!outputFolder.exists) {
+    outputFolder.create();
+  }
 
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
@@ -151,7 +156,7 @@ function startExportImage(files, lastModified, outputPath) {
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
 
-    var notSavingFile = exportImage(file, outputPath, lastModified[files[i]]);
+    var notSavingFile = exportImage(file, outputPath, lastModified[files[i]], withPrice);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 

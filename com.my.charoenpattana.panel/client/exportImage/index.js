@@ -23,16 +23,12 @@ var buildTable = (name, files) => {
 };
 
 $("#confirm").on("click", async e => {
+  var withPrice = $("#withPriceCheckbox").prop("checked");
+
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
   }
-
-  // var historySelectorPath = "";
-
-  // if ($("#historySelector")[0].files.length > 0) {
-  //   historySelectorPath = $("#historySelector")[0].files[0].path;
-  // }
 
   if (confirm(`ต้องการ Export Image หรือไม่`)) {
     $("#confirm").prop("disabled", true);
@@ -54,9 +50,11 @@ $("#confirm").on("click", async e => {
     jsx.evalScript("selectFolder()", output => {
       var i = 0;
 
+      output = withPrice ? output.slice(0, -1) + '\\\\withPrice"' : output.slice(0, -1) + '\\\\withoutPrice"';
+
       fileChunks.forEach(async chunks => {
         console.log("start chunks", i++);
-        await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output})`, res => {
+        await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output}, ${withPrice})`, res => {
           console.log("result :", res);
           // data = JSON.parse(res);
 

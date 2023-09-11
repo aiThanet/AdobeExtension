@@ -663,7 +663,7 @@ function setBleed(pi, bp) {
   pi.locked = true;
 }
 
-function exportImage(file, outputPath, lastModified) {
+function exportImage(file, outputPath, lastModified, withPrice) {
   var notSavingFiles = "";
   var newFileName = file.getFileName();
 
@@ -672,6 +672,17 @@ function exportImage(file, outputPath, lastModified) {
   if (!destFile.exists || (destFile.exists && lastModified >= destFile.modified.getTime() + 3000)) {
     var doc = app.open(file);
     updateAllOutdatedLinks(doc);
+
+    if (!withPrice) {
+      var items = doc.pageItems.everyItem().getElements();
+      for (i = 0; i < items.length; i++) {
+        var item = items[i];
+
+        if (item instanceof TextFrame && item.contents.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
+          item.visible = false;
+        }
+      }
+    }
 
     app.jpegExportPreferences.properties = {
       antiAlias: true,
