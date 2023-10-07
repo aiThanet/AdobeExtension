@@ -74,7 +74,7 @@ $("#confirm").on("click", async e => {
     });
 
     console.log("start trim");
-    await jsx.evalScript(`runTrimScript())`, res => {
+    await jsx.evalScript(`runTrimScript()`, res => {
       console.log("Trim ", res)
     })
     console.log("end trim");
