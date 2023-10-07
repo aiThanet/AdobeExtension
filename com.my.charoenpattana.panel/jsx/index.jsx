@@ -188,6 +188,8 @@ function startExportImage(files, lastModified, outputPath) {
   var now = Date.now();
   var rows = [];
 
+  File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
+
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
     var fileName = file.getFileNameWithExtension();
