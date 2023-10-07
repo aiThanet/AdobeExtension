@@ -57,6 +57,7 @@ $("#confirm").on("click", async e => {
         console.log("start chunks", i++);
         await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output})`, res => {
           console.log("result :", res);
+          
           // data = JSON.parse(res);
 
           // $("#displayBody").empty();
@@ -66,12 +67,16 @@ $("#confirm").on("click", async e => {
       });
 
       
+      console.log("end chuck");
 
+      
       
     });
 
-    console.log("end");
-
+    console.log("start trim");
     await jsx.evalScript(`runTrimScript())`)
+    console.log("end trim");
+
+    
   }
 });
