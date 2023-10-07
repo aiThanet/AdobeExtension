@@ -69,16 +69,11 @@ $("#confirm").on("click", async e => {
       
       console.log("end chuck");
 
-      
-      
+      console.log("start trim");
+      jsx.evalScript(`runTrimScript()`, res => {
+        console.log("Trim ", res)
+      })
+      console.log("end trim");
     });
-
-    console.log("start trim");
-    await jsx.evalScript(`runTrimScript()`, res => {
-      console.log("Trim ", res)
-    })
-    console.log("end trim");
-
-    
   }
 });
