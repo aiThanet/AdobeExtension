@@ -140,6 +140,10 @@ function startFixBleed(files) {
   return "";
 }
 
+function runTrimScript(){
+  File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
+}
+
 function startExportImage(files, lastModified, outputPath) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
@@ -187,8 +191,6 @@ function startExportImage(files, lastModified, outputPath) {
 
   var now = Date.now();
   var rows = [];
-
-  File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
 
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
