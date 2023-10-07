@@ -47,12 +47,13 @@ $("#confirm").on("click", async e => {
       fileChunks.push(files.slice(i, i + chunkSize));
     }
 
-    jsx.evalScript("selectFolder()", async output => {
+    await jsx.evalScript("selectFolder()", output => {
       var i = 0;
+      console.log("start");
 
       // output = withPrice ? output.slice(0, -1) + '\\\\withPrice"' : output.slice(0, -1) + '\\\\withoutPrice"';
 
-      await fileChunks.forEach(async chunks => {
+      fileChunks.forEach(async chunks => {
         console.log("start chunks", i++);
         await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output})`, res => {
           console.log("result :", res);
@@ -64,9 +65,13 @@ $("#confirm").on("click", async e => {
         });
       });
 
-      jsx.evalScript(`runTrimScript())`)
+      
 
-      console.log("end");
+      
     });
+
+    console.log("end");
+
+    await jsx.evalScript(`runTrimScript())`)
   }
 });
