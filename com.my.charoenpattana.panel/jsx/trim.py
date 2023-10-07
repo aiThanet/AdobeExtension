@@ -1,8 +1,9 @@
 from PIL import Image
 from glob import glob
+from tqdm import tqdm
 
 def trim_all_images(folder_path):
-    for name in glob(folder_path + "/*.png"):
+    for name in tqdm(glob(folder_path + "/*.png")):
         trim_image(name)
 
 def trim_image(image_path):
