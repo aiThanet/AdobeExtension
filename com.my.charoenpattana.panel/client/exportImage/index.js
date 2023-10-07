@@ -42,7 +42,7 @@ $("#confirm").on("click", async e => {
     files.sort();
 
     fileChunks = [];
-    const chunkSize = 50;
+    const chunkSize = 100;
     for (let i = 0; i < files.length; i += chunkSize) {
       fileChunks.push(files.slice(i, i + chunkSize));
     }
