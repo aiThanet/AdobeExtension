@@ -13,4 +13,4 @@ def trim_image(image_path):
     im2.size
     im2.save(image_path)
 
-trim_all_images('\\\\JPNNAS\\jpndesign\\image\\withoutDescription')
+trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription')
