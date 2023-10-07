@@ -712,9 +712,14 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
           item.visible = false;
         }
 
-        if ("contents" in item && item.contents.match(regex) != null) {
+        if ("contents" in item && item.contents.indexOf("\u0e43\u0e0a\u0e49") != -1) {
           item.visible = false;
         }
+
+        // Remove all text contain Thai character
+        // if ("contents" in item && item.contents.match(regex) != null) {
+        //   item.visible = false;
+        // }
       }
     }
 
