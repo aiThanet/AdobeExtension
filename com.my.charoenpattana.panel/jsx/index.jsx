@@ -141,7 +141,8 @@ function startFixBleed(files) {
 }
 
 function runTrimScript(){
-  File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
+  var res = File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
+  return JSON.lave(res);
 }
 
 function startExportImage(files, lastModified, outputPath) {
