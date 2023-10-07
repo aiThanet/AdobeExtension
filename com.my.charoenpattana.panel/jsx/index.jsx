@@ -140,15 +140,10 @@ function startFixBleed(files) {
   return "";
 }
 
-function startExportImage(files, lastModified, outputPath, withPrice) {
+function startExportImage(files, lastModified, outputPath) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
-
-  outputFolder = Folder(outputPath);
-  if (!outputFolder.exists) {
-    outputFolder.create();
-  }
 
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
@@ -156,7 +151,31 @@ function startExportImage(files, lastModified, outputPath, withPrice) {
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
 
-    var notSavingFile = exportImage(file, outputPath, lastModified[files[i]], withPrice);
+    var outputwithPrice = outputPath + "/withPrice";
+    var outputwithOutPrice = outputPath + "/withoutPrice";
+    var outputwithoutDescription = outputPath + "/withoutDescription";
+    var backupPath = outputPath + "/backup";
+
+    outputwithPriceFolder = Folder(outputwithPrice);
+    outputwithOutPriceFolder = Folder(outputwithOutPrice);
+    outputwithoutDescriptionFolder = Folder(outputwithoutDescription);
+    backupPathPriceFolder = Folder(backupPath);
+    if (!outputwithPriceFolder.exists) {
+      outputwithPriceFolder.create();
+    }
+    if (!outputwithOutPriceFolder.exists) {
+      outputwithOutPriceFolder.create();
+    }
+    if (!outputwithoutDescriptionFolder.exists) {
+      outputwithoutDescriptionFolder.create();
+    }
+    if (!backupPathPriceFolder.exists) {
+      backupPathPriceFolder.create();
+    }
+
+    var notSavingFile = exportImage(file, outputwithPrice, backupPath, lastModified[files[i]], "withPrice");
+    exportImage(file, outputwithOutPrice, backupPath, lastModified[files[i]], "withoutPrice");
+    exportImage(file, outputwithoutDescription, backupPath, lastModified[files[i]], "withoutDescription");
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
