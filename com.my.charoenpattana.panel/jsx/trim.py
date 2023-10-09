@@ -22,4 +22,5 @@ def trim_image(image_path, f):
     
 f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
 trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f)
+trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f)
 f.close()
