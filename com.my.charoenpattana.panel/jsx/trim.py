@@ -7,9 +7,9 @@ def trim_all_images(folder_path, f):
         trim_image(name, f)
 
 def trim_image(image_path, f):
-    im = Image.open(image_path)
-    width, height = im.size
     try:
+        im = Image.open(image_path)
+        width, height = im.size
         bbox = im.getbbox()
         b_width = bbox[2] - bbox[0]
         b_height = bbox[3] - bbox[1]
@@ -18,7 +18,8 @@ def trim_image(image_path, f):
         im2 = im.crop(im.getbbox())
         im2.save(image_path)
     except Exception as e:
-        f.write("Error: ", image_path, e)
+        print("ERROR: ", image_path + " : " + str(e))
+        f.write(image_path + " : " + str(e))
     
 f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
 trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f)
