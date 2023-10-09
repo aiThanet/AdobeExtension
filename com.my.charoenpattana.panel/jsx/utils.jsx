@@ -663,8 +663,7 @@ function setBleed(pi, bp) {
   pi.locked = true;
 }
 
-function hideOnlyImage(rootItem){
-  var items = rootItem.pageItems.everyItem().getElements();
+function hideOnlyImage(items){
     for (i = 0; i < items.length; i++) {
       var item = items[i];
 
@@ -672,10 +671,6 @@ function hideOnlyImage(rootItem){
         if (item.allGraphics.length > 0 && (item.allGraphics[0].imageTypeName == "JPEG" || item.allGraphics[0].imageTypeName == "PNG" || item.allGraphics[0].imageTypeName == "TIFF" || item.allGraphics[0].imageTypeName == "Photoshop")) {
           continue;
         }
-      }
-
-      if (item instanceof Group) {
-        hideOnlyImage(item)
       }
 
       item.visible = false;
@@ -744,7 +739,7 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
     }
 
     if (type == "withOnlyImage") {
-      hideOnlyImage(doc)
+      hideOnlyImage(doc.allPageItems)
     }
 
     // save image
