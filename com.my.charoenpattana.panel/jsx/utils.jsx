@@ -667,7 +667,7 @@ function hideOnlyImage(items){
     for (i = 0; i < items.length; i++) {
       var item = items[i];
 
-      if (item instanceof Rectangle) {
+      if (item instanceof Rectangle || item instanceof Polygon)  {
         if (item.allGraphics.length > 0 && (item.allGraphics[0].imageTypeName == "JPEG" || item.allGraphics[0].imageTypeName == "PNG" || item.allGraphics[0].imageTypeName == "TIFF" || item.allGraphics[0].imageTypeName == "Photoshop")) {
           continue;
         }
@@ -676,7 +676,6 @@ function hideOnlyImage(items){
       if (item instanceof Group || item instanceof Image) {
         continue;
       }
-
 
       item.visible = false;
     }
