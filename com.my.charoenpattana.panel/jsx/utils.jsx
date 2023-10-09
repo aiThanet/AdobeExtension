@@ -667,7 +667,8 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
   var notSavingFiles = "";
   var newFileName = file.getFileName();
   var extension = ".jpg";
-  if (type == "withoutDescription") {
+  var isPNGExtension = type == "withoutDescription" || type == "withOnlyImage";
+  if (isPNGExtension) {
     extension = ".png";
   }
 
@@ -723,7 +724,23 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
       }
     }
 
-    if (type == "withoutDescription") {
+    if (type == "withOnlyImage") {
+      var items = doc.pageItems.everyItem().getElements();
+      for (i = 0; i < items.length; i++) {
+        var item = items[i];
+
+        if (item instanceof Rectangle) {
+          if (item.allGraphics.length > 0 && (item.allGraphics[0].imageTypeName == "JPEG" || item.allGraphics[0].imageTypeName == "PNG" || item.allGraphics[0].imageTypeName == "TIFF" || item.allGraphics[0].imageTypeName == "Photoshop")) {
+            continue;
+          }
+        }
+
+        item.visible = false;
+      }
+    }
+
+    // save image
+    if (isPNGExtension) {
       app.pngExportPreferences.properties = {
         antiAlias: true,
         pngColorSpace: PNGColorSpaceEnum.RGB,

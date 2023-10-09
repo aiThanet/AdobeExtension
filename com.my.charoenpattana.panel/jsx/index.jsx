@@ -140,8 +140,8 @@ function startFixBleed(files) {
   return "";
 }
 
-function runTrimScript(){
-  var res = File('\\\\JPNNAS\\jpndesign\\images\\trim.py').execute()
+function runTrimScript() {
+  var res = File("\\\\JPNNAS\\jpndesign\\images\\trim.py").execute();
   return JSON.lave(res);
 }
 
@@ -159,11 +159,13 @@ function startExportImage(files, lastModified, outputPath) {
     var outputwithPrice = outputPath + "/withPrice";
     var outputwithOutPrice = outputPath + "/withoutPrice";
     var outputwithoutDescription = outputPath + "/withoutDescription";
+    var outputwithOnlyImage = outputPath + "/withOnlyImage";
     var backupPath = outputPath + "/backup";
 
     outputwithPriceFolder = Folder(outputwithPrice);
     outputwithOutPriceFolder = Folder(outputwithOutPrice);
     outputwithoutDescriptionFolder = Folder(outputwithoutDescription);
+    outputwithOnlyImageFolder = Folder(outputwithOnlyImage);
     backupPathPriceFolder = Folder(backupPath);
     if (!outputwithPriceFolder.exists) {
       outputwithPriceFolder.create();
@@ -174,6 +176,9 @@ function startExportImage(files, lastModified, outputPath) {
     if (!outputwithoutDescriptionFolder.exists) {
       outputwithoutDescriptionFolder.create();
     }
+    if (!outputwithOnlyImageFolder.exists) {
+      outputwithOnlyImageFolder.create();
+    }
     if (!backupPathPriceFolder.exists) {
       backupPathPriceFolder.create();
     }
@@ -181,6 +186,7 @@ function startExportImage(files, lastModified, outputPath) {
     var notSavingFile = exportImage(file, outputwithPrice, backupPath, lastModified[files[i]], "withPrice");
     exportImage(file, outputwithOutPrice, backupPath, lastModified[files[i]], "withoutPrice");
     exportImage(file, outputwithoutDescription, backupPath, lastModified[files[i]], "withoutDescription");
+    exportImage(file, outputwithOnlyImage, backupPath, lastModified[files[i]], "withOnlyImage");
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
