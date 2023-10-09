@@ -663,6 +663,25 @@ function setBleed(pi, bp) {
   pi.locked = true;
 }
 
+function hideOnlyImage(rootItem){
+  var items = rootItem.pageItems.everyItem().getElements();
+    for (i = 0; i < items.length; i++) {
+      var item = items[i];
+
+      if (item instanceof Rectangle) {
+        if (item.allGraphics.length > 0 && (item.allGraphics[0].imageTypeName == "JPEG" || item.allGraphics[0].imageTypeName == "PNG" || item.allGraphics[0].imageTypeName == "TIFF" || item.allGraphics[0].imageTypeName == "Photoshop")) {
+          continue;
+        }
+      }
+
+      if (item instanceof Group) {
+        hideOnlyImage(item)
+      }
+
+      item.visible = false;
+    }
+}
+
 function exportImage(file, outputPath, backupPath, lastModified, type) {
   var notSavingFiles = "";
   var newFileName = file.getFileName();
@@ -725,18 +744,7 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
     }
 
     if (type == "withOnlyImage") {
-      var items = doc.pageItems.everyItem().getElements();
-      for (i = 0; i < items.length; i++) {
-        var item = items[i];
-
-        if (item instanceof Rectangle) {
-          if (item.allGraphics.length > 0 && (item.allGraphics[0].imageTypeName == "JPEG" || item.allGraphics[0].imageTypeName == "PNG" || item.allGraphics[0].imageTypeName == "TIFF" || item.allGraphics[0].imageTypeName == "Photoshop")) {
-            continue;
-          }
-        }
-
-        item.visible = false;
-      }
+      hideOnlyImage(doc)
     }
 
     // save image
