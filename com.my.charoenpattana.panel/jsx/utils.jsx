@@ -673,6 +673,11 @@ function hideOnlyImage(items){
         }
       }
 
+      if (item instanceof Group || item instanceof Image) {
+        continue;
+      }
+
+
       item.visible = false;
     }
 }
