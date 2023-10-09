@@ -219,6 +219,7 @@ function startExportImage(files, lastModified, outputPath) {
 }
 
 function selectFolder() {
-  var folder = Folder.selectDialog("Select folder");
+  // var folder = Folder.selectDialog("Select folder");
+  var folder = Folder("\\\\JPNNAS\\jpndesign\\images");
   return JSON.lave(folder.fsName);
 }
