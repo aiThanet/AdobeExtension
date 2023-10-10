@@ -689,8 +689,6 @@ function checkFolder(outputPath, type) {
     outputwithTypeFolder.create();
   }
 
-  outputwithTypeFolder.close()
-
   return outputwithType
 }
 
