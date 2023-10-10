@@ -681,7 +681,23 @@ function hideOnlyImage(items){
     }
 }
 
-function exportImage(file, outputPath, backupPath, lastModified, type) {
+function checkFolder(outputPath, type) {
+  var outputwithType = outputPath + "/" + type;
+
+  outputwithTypeFolder = Folder(outputwithType);
+  if (!outputwithTypeFolder.exists) {
+    outputwithTypeFolder.create();
+  }
+
+  outputwithTypeFolder.close()
+
+  return outputwithType
+}
+
+function exportImage(file, rootOutputPath, backupPath, lastModified, type, exportResolution) {
+
+  var outputPath = checkFolder(rootOutputPath, type)
+  
   var notSavingFiles = "";
   var newFileName = file.getFileName();
   var extension = ".jpg";
@@ -754,7 +770,7 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
         pngQuality: PNGQualityEnum.MAXIMUM,
         pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
         transparentBackground: true,
-        exportResolution: 600,
+        exportResolution: exportResolution,
         pageString: "1",
       };
 
@@ -763,7 +779,7 @@ function exportImage(file, outputPath, backupPath, lastModified, type) {
       app.jpegExportPreferences.properties = {
         antiAlias: true,
         embedColorProfile: true,
-        exportResolution: 600,
+        exportResolution: exportResolution,
         jpegColorSpace: JpegColorSpaceEnum.RGB,
         jpegQuality: JPEGOptionsQuality.MAXIMUM,
         jpegExportRange: ExportRangeOrAllPages.EXPORT_RANGE,

@@ -150,43 +150,23 @@ function startExportImage(files, lastModified, outputPath) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
 
+  var backupPath = outputPath + "/backup";
+    backupPathPriceFolder = Folder(backupPath);
+    if (!backupPathPriceFolder.exists) {
+      backupPathPriceFolder.create();
+    }
+
   for (var i = 0; i < files.length; i++) {
     var file = File(files[i]);
     var fileName = file.getFileName();
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
 
-    var outputwithPrice = outputPath + "/withPrice";
-    var outputwithOutPrice = outputPath + "/withoutPrice";
-    var outputwithoutDescription = outputPath + "/withoutDescription";
-    var outputwithOnlyImage = outputPath + "/withOnlyImage";
-    var backupPath = outputPath + "/backup";
-
-    outputwithPriceFolder = Folder(outputwithPrice);
-    outputwithOutPriceFolder = Folder(outputwithOutPrice);
-    outputwithoutDescriptionFolder = Folder(outputwithoutDescription);
-    outputwithOnlyImageFolder = Folder(outputwithOnlyImage);
-    backupPathPriceFolder = Folder(backupPath);
-    if (!outputwithPriceFolder.exists) {
-      outputwithPriceFolder.create();
-    }
-    if (!outputwithOutPriceFolder.exists) {
-      outputwithOutPriceFolder.create();
-    }
-    if (!outputwithoutDescriptionFolder.exists) {
-      outputwithoutDescriptionFolder.create();
-    }
-    if (!outputwithOnlyImageFolder.exists) {
-      outputwithOnlyImageFolder.create();
-    }
-    if (!backupPathPriceFolder.exists) {
-      backupPathPriceFolder.create();
-    }
-
-    var notSavingFile = exportImage(file, outputwithPrice, backupPath, lastModified[files[i]], "withPrice");
-    exportImage(file, outputwithOutPrice, backupPath, lastModified[files[i]], "withoutPrice");
-    exportImage(file, outputwithoutDescription, backupPath, lastModified[files[i]], "withoutDescription");
-    exportImage(file, outputwithOnlyImage, backupPath, lastModified[files[i]], "withOnlyImage");
+    var notSavingFile = exportImage(file, outputPath, backupPath, lastModified[files[i]], "withPrice", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withOnlyImage", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription300", 300);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
