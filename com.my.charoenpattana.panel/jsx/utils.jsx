@@ -714,7 +714,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
       destFile.copy(backupPath + "/" + newFileName + extension);
     }
 
-    if (type == "withoutPrice") {
+    if (type.indexOf("withoutPrice") != -1) {
       var items = doc.pageItems.everyItem().getElements();
       for (i = 0; i < items.length; i++) {
         var item = items[i];
@@ -725,7 +725,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
       }
     }
 
-    if (type == "withoutDescription") {
+    if (type.indexOf("withoutDescription") != -1) {
       var width = doc.pages[0].bounds[3];
       var height = doc.pages[0].bounds[2];
       var cutline = parseInt(height * 0.2);
@@ -756,7 +756,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
       }
     }
 
-    if (type == "withOnlyImage") {
+    if (type.indexOf("withOnlyImage") != -1) {
       hideOnlyImage(doc.allPageItems)
     }
 

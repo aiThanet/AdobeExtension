@@ -166,7 +166,7 @@ function startExportImage(files, lastModified, outputPath) {
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withOnlyImage", 600);
-    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription300", 300);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice300", 300);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
