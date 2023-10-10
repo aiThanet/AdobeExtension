@@ -1,10 +1,13 @@
 from PIL import Image
 from glob import glob
 from tqdm import tqdm
+import asyncio
 
-def trim_all_images(folder_path, f):
+async def trim_all_images(folder_path, f):
+    print("Start trim folder: ", folder_path)
     for name in tqdm(glob(folder_path + "/*.png")):
         trim_image(name, f)
+    print("Finish trim folder: ", folder_path)
 
 def trim_image(image_path, f):
     try:
@@ -20,8 +23,17 @@ def trim_image(image_path, f):
     except Exception as e:
         print("ERROR: ", image_path + " : " + str(e))
         f.write(image_path + " : " + str(e))
+
     
-f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
-trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f)
-trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f)
-f.close()
+async def main():
+    print("Start Program")
+    f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
+    async with asyncio.TaskGroup() as group:
+        group.create_task(trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f))
+        group.create_task(trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f))
+    f.close()
+    print("Finish Program")
+
+asyncio.run(main())
+
+
