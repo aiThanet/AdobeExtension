@@ -9,10 +9,8 @@ loop = asyncio.new_event_loop()
 thread_pool = concurrent.futures.ThreadPoolExecutor()
 
 def trim_all_images(folder_path, f):
-    print("Start trim folder: ", folder_path)
     for name in tqdm(glob(folder_path + "/*.png")):
         trim_image(name, f)
-    print("Finish trim folder: ", folder_path)
 
 def trim_image(image_path, f):
     try:
@@ -38,12 +36,14 @@ async def async_image_process(img, f):
 
 async def main():
     print("Start Program")
-    f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
+    f1 = open("\\\\JPNNAS\\jpndesign\\images\\error_withoutDescription.txt", "a")
+    f2 = open("\\\\JPNNAS\\jpndesign\\images\\error_withOnlyImage.txt", "a")
     async with asyncio.TaskGroup() as group:
-        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f))
-        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f))
+        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f1))
+        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f2))
     
-    f.close()
+    f1.close()
+    f2.close()
     print("Finish Program")
 
 asyncio.run(main())
