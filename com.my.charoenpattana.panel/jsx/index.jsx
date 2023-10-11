@@ -141,8 +141,10 @@ function startFixBleed(files) {
 }
 
 function runTrimScript() {
-  var res = File("\\\\JPNNAS\\jpndesign\\images\\trim.py").execute();
-  return JSON.lave(res);
+  var trim_res = File("\\\\JPNNAS\\jpndesign\\images\\trim.py").execute();
+  // var optimize_res = File("\\\\JPNNAS\\jpndesign\\images\\optimize.py").execute();
+  return JSON.lave("Result Trim: " + trim_res)
+  // return JSON.lave("Result Trim: " + trim_res + " Result Optimize: " + optimize_res);
 }
 
 function startExportImage(files, lastModified, outputPath) {
@@ -166,7 +168,6 @@ function startExportImage(files, lastModified, outputPath) {
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withOnlyImage", 600);
-    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice300", 300);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
