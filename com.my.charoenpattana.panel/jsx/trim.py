@@ -2,8 +2,13 @@ from PIL import Image
 from glob import glob
 from tqdm import tqdm
 import asyncio
+import concurrent.futures
+import functools
 
-async def trim_all_images(folder_path, f):
+loop = asyncio.new_event_loop()
+thread_pool = concurrent.futures.ThreadPoolExecutor()
+
+def trim_all_images(folder_path, f):
     print("Start trim folder: ", folder_path)
     for name in tqdm(glob(folder_path + "/*.png")):
         trim_image(name, f)
@@ -24,13 +29,20 @@ def trim_image(image_path, f):
         print("ERROR: ", image_path + " : " + str(e))
         f.write(image_path + " : " + str(e))
 
-    
+async def async_image_process(img, f):
+    await loop.run_in_executor(
+        thread_pool, 
+        functools.partial(trim_all_images, img, f)
+    )
+
+
 async def main():
     print("Start Program")
     f = open("\\\\JPNNAS\\jpndesign\\images\\error.txt", "a")
     async with asyncio.TaskGroup() as group:
-        group.create_task(trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f))
-        group.create_task(trim_all_images('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f))
+        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withoutDescription', f))
+        group.create_task(async_image_process('\\\\JPNNAS\\jpndesign\\images\\withOnlyImage', f))
+    
     f.close()
     print("Finish Program")
 
