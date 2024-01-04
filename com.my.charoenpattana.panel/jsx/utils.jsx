@@ -502,56 +502,51 @@ function exportPDF(file, outputPath) {
 }
 
 function exportImageAllCatalog(file, outputPath) {
-  var notSavingFiles = "";
   var folderPath = file.getFolderPath();
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
   var destFile = File(outputPath + "/" + newFileName + ".png");
-  if (!destFile.exists) {
-    var doc = app.open(file);
-    var missingLink = updateAllOutdatedLinks(doc);
 
-    var maxPage = 1;
-    var links = doc.links;
+  var doc = app.open(file);
+  
+  updateAllOutdatedLinks(doc);
 
-    // Find Maximum Page
-    for (i = 0; i < links.length; i++) {
-      var link = links[i];
-      var linkFile = File(link.filePath);
-      var linkExtension = linkFile.getFileExtension();
+  var maxPage = 1;
+  var links = doc.links;
 
-      if (linkExtension == "indd") {
-        link.show();
-        var aSel = doc.selection[0];
-        var page = Number(aSel.parentPage.name);
-        maxPage = Math.max(maxPage, page);
-      }
+  // Find Maximum Page
+  for (i = 0; i < links.length; i++) {
+    var link = links[i];
+    var linkFile = File(link.filePath);
+    var linkExtension = linkFile.getFileExtension();
 
-      linkFile.close();
+    if (linkExtension == "indd") {
+      link.show();
+      var aSel = doc.selection[0];
+      var page = Number(aSel.parentPage.name);
+      maxPage = Math.max(maxPage, page);
     }
 
-    app.pngExportPreferences.properties = {
-      antiAlias: true,
-      pngColorSpace: PNGColorSpaceEnum.RGB,
-      pngQuality: PNGQualityEnum.MAXIMUM,
-      pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
-      transparentBackground: true,
-      exportResolution: 300,
-      pngSuffix: '_^P',
-      pageString: "1-" + maxPage,
-    };
-
-    doc.exportFile(ExportFormat.PNG_FORMAT, destFile);
-
-    app.pdfExportPreferences.pageRange = "1-" + maxPage;
-
-    doc.close(SaveOptions.NO);
-  } else {
-    notSavingFiles = destFile.getFileName();
+    linkFile.close();
   }
-  destFile.close(SaveOptions.NO);
-  return notSavingFiles;
+
+  app.pngExportPreferences.properties = {
+    antiAlias: true,
+    pngColorSpace: PNGColorSpaceEnum.RGB,
+    pngQuality: PNGQualityEnum.MAXIMUM,
+    pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
+    transparentBackground: true,
+    exportResolution: 300,
+    pngSuffix: '_^P',
+    pageString: "1-" + maxPage,
+  };
+
+  doc.exportFile(ExportFormat.PNG_FORMAT, destFile);
+  doc.close(SaveOptions.NO);
+  destFile.close();
+
+  return "";
 }
 
 

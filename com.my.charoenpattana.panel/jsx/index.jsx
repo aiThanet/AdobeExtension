@@ -114,10 +114,7 @@ function startExportPDF(files) {
   return JSON.lave(notSavingFiles);
 }
 
-function startExportImageAllCatalog(files) {
-  var outputFolder = Folder.selectDialog("Select output folder");
-  var outputPathPath = outputFolder.fsName;
-  var notSavingFiles = [];
+function startExportImageAllCatalog(files, outputPath) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
 
@@ -126,15 +123,14 @@ function startExportImageAllCatalog(files) {
     var fileName = file.getFileName();
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
-    var notSavingFile = exportImageAllCatalog(file, outputPathPath);
-    if (notSavingFile) notSavingFiles.push(notSavingFile);
+    exportImageAllCatalog(file, outputPath);
 
     progress.increment();
     file.close();
   }
   progress.close();
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
-  return JSON.lave(notSavingFiles);
+  return "";
 }
 
 function startMoveItem(goodCode) {
@@ -225,5 +221,10 @@ function startExportImage(files, lastModified, outputPath) {
 function selectFolder() {
   // var folder = Folder.selectDialog("Select folder");
   var folder = Folder("\\\\JPNNAS\\jpndesign\\images");
+  return JSON.lave(folder.fsName);
+}
+
+function selectFolderFromDialog() {
+  var folder = Folder.selectDialog("Select folder");
   return JSON.lave(folder.fsName);
 }
