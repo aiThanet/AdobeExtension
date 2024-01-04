@@ -15,7 +15,7 @@ def add_watermask(image_path, watermask_path, output_path):
 
     background.paste(foreground, (0, 0), foreground)
 
-    background.save(output_path + Path(image_path).stem + '.jpg')
+    background.save(output_path + Path(image_path).stem + '.jpg', optimize=True)
 
 
 add_watermask_all_images('', '', '')
