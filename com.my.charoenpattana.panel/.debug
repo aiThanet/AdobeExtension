@@ -40,4 +40,9 @@
       <Host Name="IDSN" Port="8098" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanel">
+    <HostList>
+      <Host Name="IDSN" Port="8099" />
+    </HostList>
+  </Extension>
 </ExtensionList>

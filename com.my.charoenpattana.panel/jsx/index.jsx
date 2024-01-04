@@ -114,6 +114,29 @@ function startExportPDF(files) {
   return JSON.lave(notSavingFiles);
 }
 
+function startExportImageAllCatalog(files) {
+  var outputFolder = Folder.selectDialog("Select output folder");
+  var outputPathPath = outputFolder.fsName;
+  var notSavingFiles = [];
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
+  progress(files.length);
+
+  for (var i = 0; i < files.length; i++) {
+    var file = File(files[i]);
+    var fileName = file.getFileName();
+
+    progress.message(i + 1 + " / " + files.length + " : " + fileName);
+    var notSavingFile = exportImageAllCatalog(file, outputPathPath);
+    if (notSavingFile) notSavingFiles.push(notSavingFile);
+
+    progress.increment();
+    file.close();
+  }
+  progress.close();
+  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  return JSON.lave(notSavingFiles);
+}
+
 function startMoveItem(goodCode) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   moveAfterItem(goodCode);

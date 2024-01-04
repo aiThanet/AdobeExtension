@@ -11,13 +11,14 @@
     <Extension Id="com.my.charoenpattana.moveItemPanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.fixBleedPanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.exportImagePanel" Version="1.1.1" />
+    <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanel" Version="1.1.1" />
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
       <!-- 3) -->
       <Host Name="PHSP" Version="23.0" />
       <Host Name="PHXS" Version="23.0" />
-      <Host Name="IDSN" Version="16.3" />
+      <Host Name="IDSN" Version="19.0" />
     </HostList>
     <LocaleList>
       <Locale Code="All" />
@@ -233,6 +234,33 @@
           <Type>Panel</Type>
           <!-- 6) -->
           <Menu>8. Charoenpattana Library - Export Image</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>750</Height>
+              <Width>400</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanel">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/exportImageAllCatalog/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>9. Charoenpattana Library - Export Image All Catalog</Menu>
           <Geometry>
             <Size>
               <!-- 7) -->
