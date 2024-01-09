@@ -748,7 +748,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
   var notSavingFiles = "";
   var newFileName = file.getFileName();
   var extension = ".jpg";
-  var isPNGExtension = type == "withoutDescription" || type == "withOnlyImage";
+  var isPNGExtension = type == "withoutDescription" || type == "withOnlyImage" || type == "withoutPricePNG";
   if (isPNGExtension) {
     extension = ".png";
   }
@@ -818,6 +818,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
         pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
         transparentBackground: true,
         exportResolution: exportResolution,
+        pngSuffix: "",
         pageString: "1",
       };
 

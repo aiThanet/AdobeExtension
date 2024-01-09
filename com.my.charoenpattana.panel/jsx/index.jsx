@@ -187,6 +187,7 @@ function startExportImage(files, lastModified, outputPath) {
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withOnlyImage", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPricePNG", 600);
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
@@ -218,7 +219,7 @@ function startExportImage(files, lastModified, outputPath) {
   return JSON.lave(notSavingFiles);
 }
 
-function selectFolder() {
+function selectFolder_JPNDESIGN_IMAGE() {
   // var folder = Folder.selectDialog("Select folder");
   var folder = Folder("\\\\JPNNAS\\jpndesign\\images");
   return JSON.lave(folder.fsName);

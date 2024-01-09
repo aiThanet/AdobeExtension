@@ -42,38 +42,38 @@ $("#confirm").on("click", async e => {
     files.sort();
 
     fileChunks = [];
-    const chunkSize = 100;
+    const chunkSize = 50;
     for (let i = 0; i < files.length; i += chunkSize) {
       fileChunks.push(files.slice(i, i + chunkSize));
     }
 
-    await jsx.evalScript("selectFolder()", output => {
-      var i = 0;
-      console.log("start");
-
-      // output = withPrice ? output.slice(0, -1) + '\\\\withPrice"' : output.slice(0, -1) + '\\\\withoutPrice"';
-
-      fileChunks.forEach(async chunks => {
-        console.log("start chunks", i++);
-        await jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${output})`, res => {
-          console.log("result :", res);
-          
-          // data = JSON.parse(res);
-
-          // $("#displayBody").empty();
-          // var html = buildTable("ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ, ไฟล์อัพเดตอยู่แล้ว", data);
-          // $("#displayBody")[0].innerHTML = html;
-        });
-      });
-
-      
-      console.log("end chuck");
-
-      console.log("start trim");
-      jsx.evalScript(`runTrimScript()`, res => {
-        console.log("Trim ", res)
+    let outputPath = await (new Promise((resolve, reject) => {
+      jsx.evalScript("selectFolder_JPNDESIGN_IMAGE()", output => {
+        resolve(output)
       })
-      console.log("end trim");
-    });
+    }));
+
+    var i = 0;
+    console.log("start");
+
+    for (let chunks of fileChunks) {
+      console.log("start chunks", i++);
+      await (new Promise((resolve, reject) => {
+        jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${outputPath})`, res => {
+          console.log("result :", res);
+          resolve(res)
+        });
+      }));
+    }
+
+    console.log("start trim");
+    await (new Promise((resolve, reject) => {
+      jsx.evalScript("runTrimScript()", res => {
+        console.log("Trim ", res)
+        resolve(res)
+      })
+    }));
+
+    console.log("end trim");
   }
 });
