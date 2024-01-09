@@ -161,6 +161,7 @@ function startFixBleed(files) {
 
 function runTrimScript() {
   var trim_res = File("\\\\JPNNAS\\jpndesign\\images\\trim.py").execute();
+  var optimize_res = "None"
   // var optimize_res = File("\\\\JPNNAS\\jpndesign\\images\\optimize.py").execute();
   // return JSON.lave("Result Trim: " + trim_res)
   return JSON.lave("Result Trim: " + trim_res + " Result Optimize: " + optimize_res);
