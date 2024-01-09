@@ -33,7 +33,7 @@ var buildTablePrice = (name, files) => {
   return html;
 };
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
@@ -42,29 +42,56 @@ $("#confirm").on("click", e => {
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    $.ajax({
+    files.sort();
+
+    fileChunks = [];
+    const chunkSize = 50;
+    for (let i = 0; i < files.length; i += chunkSize) {
+      fileChunks.push(files.slice(i, i + chunkSize));
+    }
+
+    var priceList = await $.ajax({
       url: "http://mathongapi.jpn.local/price/first",
-      success: priceList => {
-        jsx.evalScript(`startUpdatePrice(${JSON.stringify(files)}, ${JSON.stringify(priceList)})`, res => {
-          console.log(res);
-          data = JSON.parse(res);
-
-          $("#displayBody").empty();
-
-          var html = "";
-
-          html += buildTable("รหัสสินค้าไม่ตรง", data.NotFoundPrice);
-          html += buildTablePrice("รหัสสินค้าที่อัพเดต", data.UpdatedPrice);
-          html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", data.NotUpdatePrice);
-
-          $("#displayBody")[0].innerHTML = html;
-        });
-      },
       error: err => {
         alert("ลองใหม่อีกครั้ง: " + err.statusText);
       },
       timeout: 30000,
     });
-    return;
+
+    var i = 0;
+    console.log("start");
+
+    $("#displayBody").empty();
+
+    var html = "";
+
+    var resData = {
+      'NotFoundPrice' : [],
+      'UpdatedPrice' : [],
+      'NotUpdatePrice' : []
+    }
+
+    for (let chunks of fileChunks) {
+      console.log("start chunks", i++);
+      await (new Promise((resolve, reject) => {
+        jsx.evalScript(`startUpdatePrice(${JSON.stringify(chunks)}, ${JSON.stringify(priceList)})`, res => {
+          console.log("result :", res);
+          data = JSON.parse(res);
+
+          resData['NotFoundPrice'] = [...resData['NotFoundPrice'], ...data.NotFoundPrice]
+          resData['UpdatedPrice'] = [...resData['UpdatedPrice'], ...data.UpdatedPrice]
+          resData['NotUpdatePrice'] = [...resData['NotUpdatePrice'], ...data.NotUpdatePrice]
+
+          resolve(res)
+        });
+      }));
+    }
+    console.log("end chuck");
+
+    html += buildTable("รหัสสินค้าไม่ตรง", resData['NotFoundPrice']);
+    html += buildTablePrice("รหัสสินค้าที่อัพเดต", resData['UpdatedPrice']);
+    html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", resData['NotUpdatePrice']);
+    $("#displayBody")[0].innerHTML = html;
+
   }
 });
