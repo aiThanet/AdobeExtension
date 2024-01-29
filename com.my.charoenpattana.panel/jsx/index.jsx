@@ -186,9 +186,10 @@ function startExportImage(files, lastModified, outputPath) {
 
     var notSavingFile = exportImage(file, outputPath, backupPath, lastModified[files[i]], "withPrice", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPrice", 600);
+    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPricePNG", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutDescription", 600);
     exportImage(file, outputPath, backupPath, lastModified[files[i]], "withOnlyImage", 600);
-    exportImage(file, outputPath, backupPath, lastModified[files[i]], "withoutPricePNG", 600);
+    
 
     if (notSavingFile) notSavingFiles.push(file.getFileNameWithExtension());
 
