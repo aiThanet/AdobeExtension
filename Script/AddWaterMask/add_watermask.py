@@ -15,7 +15,7 @@ def add_watermask(image_path, watermask_path, output_path):
 
     background.paste(foreground, (0, 0), foreground)
 
-    background.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True)
+    background.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True, dpi=(300, 300))
 
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ'
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
