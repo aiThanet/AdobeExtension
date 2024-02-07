@@ -506,10 +506,11 @@ function exportImageAllCatalog(file, outputPath) {
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
-  var destFile = File(outputPath + "/" + newFileName + ".png");
-  if (!destFile.exists) {
+  var checkFile = File(outputPath + "/" + newFileName + "_01.png")
+
+  if (!checkFile.exists) {
     var doc = app.open(file);
-    
+    var destFile = File(outputPath + "/" + newFileName + ".png");
     updateAllOutdatedLinks(doc);
 
     var maxPage = 1;
@@ -544,9 +545,10 @@ function exportImageAllCatalog(file, outputPath) {
 
     doc.exportFile(ExportFormat.PNG_FORMAT, destFile);
     doc.close(SaveOptions.NO);
+    destFile.close();
   }
   
-  destFile.close();
+  checkFile.close();
 
   return "";
 }
