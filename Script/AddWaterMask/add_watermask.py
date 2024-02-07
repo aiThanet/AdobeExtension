@@ -17,7 +17,7 @@ def add_watermask(image_path, watermask_path, output_path):
 
     background.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True)
 
-input_folder = '\\\\JPNNAS\\Roaming_Profile\\jpndesign\\Desktop\\ส่งโรงพิมพ์\\00 ต้นฉบับ'
-output_folder = '\\\\JPNNAS\\Roaming_Profile\\jpndesign\\Desktop\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
 watermask_path = 'C:\\Users\\jpndesign.JPN\\AppData\\Roaming\\Adobe\\CEP\\extensions\\AdobeExtension\\Script\\AddWaterMask\\Watermask_5.jpg'
 add_watermask_all_images(input_folder, watermask_path, output_folder)

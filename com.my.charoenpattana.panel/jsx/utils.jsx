@@ -507,43 +507,45 @@ function exportImageAllCatalog(file, outputPath) {
   var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
 
   var destFile = File(outputPath + "/" + newFileName + ".png");
+  if (!destFile.exists) {
+    var doc = app.open(file);
+    
+    updateAllOutdatedLinks(doc);
 
-  var doc = app.open(file);
-  
-  updateAllOutdatedLinks(doc);
+    var maxPage = 1;
+    var links = doc.links;
 
-  var maxPage = 1;
-  var links = doc.links;
+    // Find Maximum Page
+    for (i = 0; i < links.length; i++) {
+      var link = links[i];
+      var linkFile = File(link.filePath);
+      var linkExtension = linkFile.getFileExtension();
 
-  // Find Maximum Page
-  for (i = 0; i < links.length; i++) {
-    var link = links[i];
-    var linkFile = File(link.filePath);
-    var linkExtension = linkFile.getFileExtension();
+      if (linkExtension == "indd") {
+        link.show();
+        var aSel = doc.selection[0];
+        var page = Number(aSel.parentPage.name);
+        maxPage = Math.max(maxPage, page);
+      }
 
-    if (linkExtension == "indd") {
-      link.show();
-      var aSel = doc.selection[0];
-      var page = Number(aSel.parentPage.name);
-      maxPage = Math.max(maxPage, page);
+      linkFile.close();
     }
 
-    linkFile.close();
+    app.pngExportPreferences.properties = {
+      antiAlias: true,
+      pngColorSpace: PNGColorSpaceEnum.RGB,
+      pngQuality: PNGQualityEnum.MAXIMUM,
+      pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
+      transparentBackground: true,
+      exportResolution: 300,
+      pngSuffix: '_^P',
+      pageString: "1-" + maxPage,
+    };
+
+    doc.exportFile(ExportFormat.PNG_FORMAT, destFile);
+    doc.close(SaveOptions.NO);
   }
-
-  app.pngExportPreferences.properties = {
-    antiAlias: true,
-    pngColorSpace: PNGColorSpaceEnum.RGB,
-    pngQuality: PNGQualityEnum.MAXIMUM,
-    pngExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
-    transparentBackground: true,
-    exportResolution: 300,
-    pngSuffix: '_^P',
-    pageString: "1-" + maxPage,
-  };
-
-  doc.exportFile(ExportFormat.PNG_FORMAT, destFile);
-  doc.close(SaveOptions.NO);
+  
   destFile.close();
 
   return "";
