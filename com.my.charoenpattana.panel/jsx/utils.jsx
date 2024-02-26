@@ -782,7 +782,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
       var width = doc.pages[0].bounds[3];
       var height = doc.pages[0].bounds[2];
       var cutline = parseInt(height * 0.2);
-      var regex = /[\u0e01\u0e02\u0e03\u0e04\u0e05\u0e06\u0e07\u0e08\u0e09\u0e0a\u0e0b\u0e0c\u0e0d\u0e0e\u0e0f\u0e10\u0e11\u0e12\u0e13\u0e14\u0e15\u0e16\u0e17\u0e18\u0e19\u0e1a\u0e1b\u0e1c\u0e1d\u0e1e\u0e1f\u0e20\u0e21\u0e22\u0e23\u0e25\u0e27\u0e28\u0e29\u0e2a\u0e2b\u0e2c\u0e2d\u0e2e]/g;
+      // var regex = /[\u0e01\u0e02\u0e03\u0e04\u0e05\u0e06\u0e07\u0e08\u0e09\u0e0a\u0e0b\u0e0c\u0e0d\u0e0e\u0e0f\u0e10\u0e11\u0e12\u0e13\u0e14\u0e15\u0e16\u0e17\u0e18\u0e19\u0e1a\u0e1b\u0e1c\u0e1d\u0e1e\u0e1f\u0e20\u0e21\u0e22\u0e23\u0e25\u0e27\u0e28\u0e29\u0e2a\u0e2b\u0e2c\u0e2d\u0e2e]/g;
 
       var items = doc.pageItems.everyItem().getElements();
       for (i = 0; i < items.length; i++) {
@@ -792,7 +792,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
         var y1 = parseInt(bounds[0]);
         var x1 = parseInt(bounds[1]);
         var y2 = parseInt(bounds[2]);
-        var x2 = parseInt(bounds[3]);
+        // var x2 = parseInt(bounds[3]);
 
         if (x1 >= width || y1 >= height || y2 <= cutline || (y1 < cutline && y2 > cutline && cutline - y1 >= (y2 - y1) * 0.7)) {
           item.visible = false;
@@ -835,6 +835,7 @@ function exportImage(file, rootOutputPath, backupPath, lastModified, type, expor
         jpegColorSpace: JpegColorSpaceEnum.RGB,
         jpegQuality: JPEGOptionsQuality.MAXIMUM,
         jpegExportRange: ExportRangeOrAllPages.EXPORT_RANGE,
+        jpegSuffix: "",
         pageString: "1",
       };
 
