@@ -1,0 +1,8 @@
+1. Open Indesign: Select extension number 9 -> Export Image All Catalog to 00ต้นฉบับ folder
+2. Go to C:\Users\jpndesign.JPN\AppData\Roaming\Adobe\CEP\extensions\AdobeExtension\Script
+3. Run python ./01AddWaterMask/add_watermask.py Script
+4. Run python ./02Combine/01-combine-image.py Script
+5. Add Image Page Number at Footer (C:\Users\jpndesign.JPN\Documents\ส่งโรงพิมพ์\01 แยกไฟล์ PDF) TH Sarabun New Font Size 16 White Color at Bottom8
+6. Run python ./02Combine/02-combine-pdf.py Script
+7. Finish file in C:\Users\jpndesign.JPN\Documents\ส่งโรงพิมพ์\02 รวมเล่ม -> merge.pdf
+8. Export To Image by open PDF : Run python ./03ExtractPDFToImage/03.py Script
