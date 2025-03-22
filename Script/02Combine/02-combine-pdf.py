@@ -1,9 +1,9 @@
 import img2pdf
 import glob
-from pypdf import PdfMerger
+from pypdf import PdfWriter
 
     
-merger = PdfMerger()
+merger = PdfWriter()
 pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 แยกไฟล์ PDF\\'
 pdfs = glob.glob(pdf_folder + "*.pdf")
 for pdf in pdfs:
