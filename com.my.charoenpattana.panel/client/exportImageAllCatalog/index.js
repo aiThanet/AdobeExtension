@@ -1,4 +1,80 @@
-$("#folderSelector").on("change", e => {
+const openDirectory = async (mode = "read") => {
+  // Feature detection. The API needs to be supported
+  // and the app not run in an iframe.
+
+
+ 
+  let directoryStructure = undefined;
+
+  // Recursive function that walks the directory structure.
+  const getFiles = async (dirHandle, path = dirHandle.name) => {
+    const dirs = [];
+    const files = [];
+    for await (const entry of dirHandle.values()) {
+      const nestedPath = `${path}/${entry.name}`;
+      if (entry.kind === "file") {
+        if (getExtension(entry.name) == "indd" && getFileName(entry.name).toLowerCase().indexOf("all") != -1) {
+          files.push(
+              entry.getFile().then((file) => {
+                file.directoryHandle = dirHandle;
+                file.handle = entry;
+                return Object.defineProperty(file, "webkitRelativePath", {
+                  configurable: true,
+                  enumerable: true,
+                  get: () => nestedPath,
+                });
+              })
+            );
+        }
+      } else if (entry.kind === "directory") {
+        dirs.push(getFiles(entry, nestedPath));
+      }
+    }
+    return [
+      ...(await Promise.all(dirs)).flat(),
+      ...(await Promise.all(files)),
+    ];
+  };
+
+  try {
+    // Open the directory.
+    const handle = await showDirectoryPicker({
+      mode,
+    });
+    // Get the directory structure.
+    $("#loadingSpinner").show();
+    $("#confirm").prop("disabled", true);
+    $("#selectDirectoryBtn").prop("disabled", true);
+    directoryStructure = await getFiles(handle, undefined);
+
+    $("#loadingSpinner").hide();
+    $("#confirm").prop("disabled", false);
+    $("#selectDirectoryBtn").prop("disabled", false);
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      console.error(err.name, err.message);
+    }
+  }
+  return directoryStructure;
+  
+};
+
+let selectFiles = []
+
+
+$("#selectDirectoryBtn").on("click", async () => {
+  const files = await openDirectory();
+
+  displayFile(files);
+
+  selectFiles = files
+  $("#fileSelectTitle").text(`ไฟล์ที่เลือก : ${selectFiles.length} ไฟล์`);
+});
+
+$("#folderSelector").on("change", async e => {
+  $("#loadingSpinner").show();
+  $("#confirm").prop("disabled", true);
+
   const dt = new DataTransfer();
 
   for (file of e.target.files) {
@@ -9,6 +85,9 @@ $("#folderSelector").on("change", e => {
 
   e.target.files = dt.files;
   displayFile(e.target.files);
+
+  $("#loadingSpinner").hide();
+  $("#confirm").prop("disabled", false);
 });
 
 var buildTable = (name, files) => {
@@ -27,6 +106,11 @@ $("#confirm").on("click", async e => {
     alert("โปรดเลือกไฟล์");
     return;
   }
+
+  $("#loadingSpinner").show();
+  $("#confirm").prop("disabled", true);
+  $("#selectDirectoryBtn").prop("disabled", true);
+  $("#folderSelector").prop("disabled", true);
 
   if (confirm(`ต้องการ Export Image หรือไม่`)) {
     $("#confirm").prop("disabled", true);
@@ -60,6 +144,11 @@ $("#confirm").on("click", async e => {
       }));
     }
     console.log("end chuck");
+
+    $("#loadingSpinner").hide();
+    $("#confirm").prop("disabled", false);
+    $("#selectDirectoryBtn").prop("disabled", false);
+    $("#folderSelector").prop("disabled", false);
 
   }
 });

@@ -15,11 +15,16 @@
       <div class="row mx-1 my-2"><h1>โปรแกรม Export Image All Catalog</h1></div>
 
       <div class="row mx-1 my-1">
-        <label for="folder">เลือกโฟลเดอร์ <i>(รองรับเฉพาะไฟล์ .indd)</i></label> <input type="file" id="folderSelector" webkitdirectory />
+        <label for="folder">เลือกโฟลเดอร์ <i>(รองรับเฉพาะไฟล์ .indd)</i></label> 
+        <input type="file" id="folderSelector" webkitdirectory />
+        <!-- <div>
+          <button id="selectDirectoryBtn">เลือกโฟลเดอร์</button> 
+          <p class="my-2 fs-6">ไฟล์ที่เลือกจะต้องเป็นไฟล์ .indd ที่มีชื่อประกอบด้วยคำว่า "all" เท่านั้น</p> 
+        </div> -->
       </div>
 
       <div class="row mx-1 my-2">
-        <h2>ไฟล์ที่เลือก</h2>
+        <h2 id="fileSelectTitle">ไฟล์ที่เลือก</h2>
         <div class="">
           <table class="table">
             <thead>
@@ -30,6 +35,11 @@
             </thead>
             <tbody id="fileDisplay"></tbody>
           </table>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center py-2" >
+        <div class="spinner-border text-primary" role="status" id="loadingSpinner" style="display: none;">
+          <span class="sr-only"></span>
         </div>
       </div>
       <div class="row mx-1"><button id="confirm" class="btn btn-primary">ตกลง</button></div>
