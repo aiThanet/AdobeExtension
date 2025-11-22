@@ -490,7 +490,7 @@ function exportPDF(file, outputPath) {
     }
 
     app.pdfExportPreferences.pageRange = "1-" + maxPage;
-    doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "PDFX-4");
+    doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "MyPreset");
 
     doc.save(file);
     doc.close();
