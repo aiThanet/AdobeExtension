@@ -715,7 +715,6 @@ function fixBleed(file) {
 
     if (item instanceof TextFrame) {
       var gb = item.geometricBounds;
-      var left = gb[1];
       var width = gb[3] - gb[1];
 
       // if frame starts before left margin and is wide enough → clamp to margins
@@ -735,11 +734,6 @@ function fixBleed(file) {
     var linkExtension = linkFile.getFileExtension();
 
     if (linkExtension === "indd") {
-      // Open linked INDD, save, close, then update link
-      var linkDoc = app.open(linkFile);
-      linkDoc.save(linkFile);  // you can add forceSave via Document.save signature if needed
-      linkDoc.close();
-      link.update();
 
       var item = getLinkParentRectangle(link);
       resizeItemToGrid(item)
