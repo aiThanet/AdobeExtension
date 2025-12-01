@@ -2,8 +2,12 @@ $("#folderSelector").on("change", e => {
   const dt = new DataTransfer();
 
   for (file of e.target.files) {
+
+    if(file.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(file.name).toLowerCase().indexOf("[skip]") != -1) {
+      continue;
+    }
     
-    if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") != -1 && file.path.toLowerCase().indexOf("_ignore_") == -1) {
+    if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") != -1) {
       dt.items.add(file);
     }
   }
