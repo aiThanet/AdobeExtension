@@ -25,6 +25,11 @@
       <Host Name="IDSN" Port="8095" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.exportPDFPanelillustrator">
+    <HostList>
+      <Host Name="ILST" Port="8195" />
+    </HostList>
+  </Extension>
   <Extension Id="com.my.charoenpattana.moveItemPanel">
     <HostList>
       <Host Name="IDSN" Port="8096" />

@@ -6,7 +6,7 @@ $("#folderSelector").on("change", e => {
       continue;
     }
     
-    if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") != -1) {
+    if (getExtension(file.name) == "ai" && getFileName(file.name).toLowerCase().indexOf("[book]") != -1) {
       dt.items.add(file);
     }
   }
@@ -36,7 +36,7 @@ $("#confirm").on("click", e => {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
     files.sort()
-    jsx.evalScript(`startExportPDF(${JSON.stringify(files)})`, res => {
+    jsx.evalScript(`startExportPDFillustrator(${JSON.stringify(files)})`, res => {
       console.log(res);
       data = JSON.parse(res);
 

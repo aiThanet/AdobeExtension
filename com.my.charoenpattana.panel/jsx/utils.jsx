@@ -501,6 +501,23 @@ function exportPDF(file, outputPath) {
   return notSavingFiles;
 }
 
+function exportPDFillustrator(file, outputPath) {
+
+  var folderPath = file.getFolderPath();
+  var relativePath = folderPath.split("\\Catalog2023\\")[1];
+  var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
+
+  var destFile = File(outputPath + "/" + newFileName + ".pdf");
+  if (!destFile.exists) {
+    var doc = app.open(file);
+    var pdfOptions = new PDFSaveOptions();
+    pdfOptions.pDFPreset = "MyillustratorPreset"; // or any preset installed
+    
+    doc.saveAs(destFile, pdfOptions);
+    doc.close();
+  }
+}
+
 function exportImageAllCatalog(file, outputPath) {
   var folderPath = file.getFolderPath();
   var relativePath = folderPath.split("\\Catalog2023\\")[1];
