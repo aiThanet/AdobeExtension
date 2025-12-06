@@ -570,6 +570,32 @@ function exportImageAllCatalog(file, outputPath) {
   return "";
 }
 
+function exportImageAllCatalogillustrator(file, outputPath) {
+  var folderPath = file.getFolderPath();
+  var relativePath = folderPath.split("\\Catalog2023\\")[1];
+  var newFileName = relativePath.split("\\").join("_") + "_" + file.getFileName();
+
+  var destFile = File(outputPath + "/" + newFileName + ".jpg");
+
+  if (!destFile.exists) {
+    var doc = app.open(file);
+    
+    var options = new ExportOptionsJPEG();
+
+    options.qualitySetting = 100
+    options.horizontalScale = 300*100/72
+    options.verticalScale = 300*100/72
+
+    doc.exportFile(destFile, ExportType.JPEG, options);
+
+    
+    doc.close();
+    destFile.close();
+  }
+
+  return "";
+}
+
 
 var X_POS = [4.5, 55.5, 106.5, 157.5];
 var Y_POS = [53, 92, 131, 170, 209, 248];

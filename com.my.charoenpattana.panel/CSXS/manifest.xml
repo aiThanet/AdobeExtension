@@ -13,6 +13,7 @@
     <Extension Id="com.my.charoenpattana.fixBleedPanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.exportImagePanel" Version="1.1.1" />
     <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanel" Version="1.1.1" />
+    <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanelillustrator" Version="1.1.1" />
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -290,6 +291,33 @@
           <Type>Panel</Type>
           <!-- 6) -->
           <Menu>9. Charoenpattana Library - Export Image All Catalog</Menu>
+          <Geometry>
+            <Size>
+              <!-- 7) -->
+              <Height>750</Height>
+              <Width>300</Width>
+            </Size>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanelillustrator">
+      <DispatchInfo>
+        <Resources>
+          <!-- 4) -->
+          <MainPath>./client/exportImageAllCatalogillustrator/index.html</MainPath>
+          <!-- 5) -->
+          <!-- <ScriptPath>./host/index.jsx</ScriptPath> -->
+          <CEFCommandLine />
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <!-- 6) -->
+          <Menu>9.1 Charoenpattana Library - Export Image All Catalog Illustrator</Menu>
           <Geometry>
             <Size>
               <!-- 7) -->

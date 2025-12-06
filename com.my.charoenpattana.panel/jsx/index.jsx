@@ -156,6 +156,25 @@ function startExportImageAllCatalog(files, outputPath) {
   return "";
 }
 
+function startExportImageAllCatalogillustrator(files, outputPath) {
+  app.userInteractionLevel = UserInteractionLevel.DONTDISPLAYALERTS
+  progress(files.length);
+
+  for (var i = 0; i < files.length; i++) {
+    var file = File(files[i]);
+    var fileName = file.getFileName();
+
+    progress.message(i + 1 + " / " + files.length + " : " + fileName);
+    exportImageAllCatalogillustrator(file, outputPath);
+
+    progress.increment();
+    file.close();
+  }
+  progress.close();
+  app.userInteractionLevel = UserInteractionLevel.DISPLAYALERTS;
+  return "";
+}
+
 function startMoveItem(goodCode) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   moveAfterItem(goodCode);

@@ -50,4 +50,9 @@
       <Host Name="IDSN" Port="8099" />
     </HostList>
   </Extension>
+  <Extension Id="com.my.charoenpattana.exportImageAllCatalogPanelillustrator">
+    <HostList>
+      <Host Name="ILST" Port="8199" />
+    </HostList>
+  </Extension>
 </ExtensionList>
