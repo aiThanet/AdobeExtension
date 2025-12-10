@@ -10,23 +10,32 @@ from pypdf import PdfMerger, PdfWriter
 from pdf2image import convert_from_path
 
 def add_watermask_all_images(folder_path, watermask_path, output_path):
-    page = 1
     for image_path in tqdm(glob(folder_path + "/*.png")):
-        add_watermask(image_path, watermask_path, output_path, page)
-        page += 1
+        add_watermask(image_path, watermask_path, output_path)
 
 
-def add_watermask(image_path, watermask_path, output_path, page_number=None):
+def add_watermask(image_path, watermask_path, output_path):
     background = Image.open(watermask_path)
     foreground = Image.open(image_path)
 
     background.paste(foreground, (0, 0), foreground)
+    background.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True, dpi=(300, 300))
+
+def add_page_number_all_images(folder_path, output_path):
+    page = 1
+    for image_path in tqdm(glob(folder_path + "/*.jpg")):
+        add_pagenumber(image_path, output_path, page)
+        page += 1
+
+
+def add_pagenumber(image_path, output_path, page_number=None):
+    foreground = Image.open(image_path)
 
     # Draw page number
     if page_number is not None:
-        draw = ImageDraw.Draw(background)
+        draw = ImageDraw.Draw(foreground)
         try:
-            font_path = r"C:\Users\JPNDESIGN.JPN\AppData\Local\Microsoft\Windows\Fonts\THSarabunNew BOLD.ttf"
+            font_path = r"C:\Users\JPNDESIGN.JPN\AppData\Local\Microsoft\Windows\Fonts\Sarabun-SemiBold.ttf"
             font = ImageFont.truetype(font_path, size=80)
         except:
             font = ImageFont.load_default()
@@ -38,33 +47,38 @@ def add_watermask(image_path, watermask_path, output_path, page_number=None):
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
 
-        x = (background.width - text_width) // 2
-        y = background.height - text_height - 60  # 20 px from bottom
+        x = (foreground.width - text_width) // 2
+        y = foreground.height - text_height - 50  # 20 px from bottom
 
-        draw.text((x, y), text, font=font, fill="white")
-
+        draw.text((x, y), text, font=font, fill="black", stroke_width=5, stroke_fill="white")
     
-    background.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True, dpi=(300, 300))
+    foreground.save(output_path + '\\' + Path(image_path).stem + '.jpg', optimize=True, dpi=(300, 300))
 
 
-print("Step1/3: Adding watermarks and page number to images...")
+
+print("Step1/4: Adding watermarks")
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ'
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
 watermask_path = './Watermask_5.jpg'
 add_watermask_all_images(input_folder, watermask_path, output_folder)
 
+print("Step2/4: Adding Page Numbers")
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ - เลขหน้า'
+add_page_number_all_images(input_folder, output_folder)
 
-print("Step2/3: Converting images to PDF...")
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ\\'
+
+print("Step3/4: Converting images to PDF...")
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ - เลขหน้า\\'
 output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
 # specify paper size (A4)
 a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
 layout_fun = img2pdf.get_layout_fun(a4inpt)
 	
 with open(output_file,"wb") as f:
-	f.write(img2pdf.convert(glob(output_folder + "*.jpg"), layout_fun=layout_fun))
+	f.write(img2pdf.convert(glob(input_folder + "*.jpg"), layout_fun=layout_fun))
 
-print("Step3/3: Combining PDFs and save...")
+print("Step4/4: Combining PDFs and save...")
 merger = PdfWriter()
 pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 แยกไฟล์ PDF\\'
 pdfs = glob(pdf_folder + "*.pdf")
