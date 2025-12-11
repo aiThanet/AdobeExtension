@@ -585,6 +585,7 @@ function exportImageAllCatalogillustrator(file, outputPath) {
     options.qualitySetting = 100
     options.horizontalScale = 300*100/72
     options.verticalScale = 300*100/72
+    options.artBoardClipping = true
 
     doc.exportFile(destFile, ExportType.JPEG, options);
 
