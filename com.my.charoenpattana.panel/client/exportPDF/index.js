@@ -26,7 +26,8 @@ var buildTable = (name, files) => {
   return html;
 };
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
+  
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
@@ -36,16 +37,42 @@ $("#confirm").on("click", e => {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
     files.sort()
-    jsx.evalScript(`startExportPDF(${JSON.stringify(files)})`, res => {
-      console.log(res);
-      data = JSON.parse(res);
 
-      $("#displayBody").empty();
+    fileChunks = [];
+    const chunkSize = 10;
+    for (let i = 0; i < files.length; i += chunkSize) {
+      fileChunks.push(files.slice(i, i + chunkSize));
+    }
 
-      var html = buildTable('ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ', data);
 
-      $("#displayBody")[0].innerHTML = html;
-    });
+    let outputPath = await (new Promise((resolve, reject) => {
+      jsx.evalScript("selectFolderFromDialog()", output => {
+        resolve(output)
+      })
+    }));
+    
+   
+    var i = 0;
+    console.log("start");
+    $("#displayBody").empty();
+    for (let chunks of fileChunks) {
+      console.log("start chunks", i++);
+      await (new Promise((resolve, reject) => {
+        jsx.evalScript(`startExportPDF(${JSON.stringify(chunks)}, ${outputPath})`, res => {
+          console.log(res);
+          
+          data = JSON.parse(res);
+          
+          var html = buildTable('ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ', data);
+          $("#displayBody")[0].innerHTML += html;
+          resolve(res)
+        });
+      }));
+    }
+    console.log("end chuck");
+
+
+    
     return;
   }
 });

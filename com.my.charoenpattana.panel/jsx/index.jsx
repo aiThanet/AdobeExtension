@@ -91,9 +91,7 @@ function startUpdatePrice(files, priceList) {
   return JSON.lave(result);
 }
 
-function startExportPDF(files) {
-  var outputFolder = Folder.selectDialog("Select output folder");
-  var outputPathPath = outputFolder.fsName;
+function startExportPDF(files, outputPath) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
   progress(files.length);
@@ -103,7 +101,7 @@ function startExportPDF(files) {
     var fileName = file.getFileName();
 
     progress.message(i + 1 + " / " + files.length + " : " + fileName);
-    var notSavingFile = exportPDF(file, outputPathPath);
+    var notSavingFile = exportPDF(file, outputPath);
     if (notSavingFile) notSavingFiles.push(notSavingFile);
 
     progress.increment();
