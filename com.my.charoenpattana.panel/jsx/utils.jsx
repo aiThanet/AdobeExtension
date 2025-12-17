@@ -490,12 +490,8 @@ function exportPDF(file, outputPath) {
 
     app.pdfExportPreferences.pageRange = "1-" + maxPage;
     doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "MyPreset");
-
-    if (doc.modified){
-      doc.save(file);
-    }
       
-    doc.close();
+    doc.close(SaveOptions.NO);
   } else {
     notSavingFiles = destFile.getFileName();
   }
@@ -1028,6 +1024,7 @@ function updateAllOutdatedLinks(doc) {
 
   for (var d = 0; d < links.length; d++) {
     var link = links[d];
+    if (!link.isValid) continue;
     if (link.status === LinkStatus.LINK_OUT_OF_DATE) {
       link.update();
     } else if (link.status === LinkStatus.LINK_MISSING) {

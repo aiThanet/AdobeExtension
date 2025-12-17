@@ -94,8 +94,6 @@ function startUpdatePrice(files, priceList) {
 function startExportPDF(files, outputPath) {
   var notSavingFiles = [];
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
-  app.scriptPreferences.enableRedraw = false;
-  app.preflightOptions.preflightOff = true;
   progress(files.length);
 
   for (var i = 0; i < files.length; i++) {
@@ -114,8 +112,6 @@ function startExportPDF(files, outputPath) {
   }
   progress.close();
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
-  app.scriptPreferences.enableRedraw = true;
-  app.preflightOptions.preflightOff = false;
   return JSON.lave(notSavingFiles);
 }
 
