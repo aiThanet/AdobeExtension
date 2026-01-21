@@ -94,7 +94,7 @@ $("#confirm").on("click", async e => {
     }
     console.log("end chuck");
 
-    html += buildTablePrice("ฟอนต์หาย", resData['MissingFont']);
+    html += buildTable("ฟอนต์หาย", resData['MissingFont']);
     html += buildTable("รหัสสินค้าไม่ตรง", resData['NotFoundPrice']);
     html += buildTablePrice("รหัสสินค้าที่อัพเดต", resData['UpdatedPrice']);
     html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", resData['NotUpdatePrice']);

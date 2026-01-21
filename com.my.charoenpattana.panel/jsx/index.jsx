@@ -76,7 +76,9 @@ function startUpdatePrice(files, priceList) {
       priceNotFound = true;
     }
     if (!priceNotFound) {
-      var [oldPrice, isMissingFont] = updatePrice(files[i], newPrice);
+      var res = updatePrice(files[i], newPrice);
+      var oldPrice = res[0];
+      var isMissingFont = res[1];
       var row = [fileName, oldPrice, newPrice];
       if(isMissingFont) {
         result.MissingFont.push(fileName);

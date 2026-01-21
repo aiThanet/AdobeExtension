@@ -435,8 +435,10 @@ function updatePrice(fileRef, newPrice) {
   var currentPrice = -1;
   var isMissingFont = false;
 
-  for (var i = 0; i < app.activeDocument.stories.length; i++) {
-    var story = app.activeDocument.stories.item(i);
+  var stories = doc.stories;
+
+  for (var i = 0; i < stories.length; i++) {
+    var story = stories[i];
     var content = story.contents;
 
     var fonts = doc.fonts;
@@ -445,6 +447,7 @@ function updatePrice(fileRef, newPrice) {
       if (fonts[k].status === FontStatus.NOT_AVAILABLE) {
         isMissingFont = true;
       }
+      break;
     }
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
