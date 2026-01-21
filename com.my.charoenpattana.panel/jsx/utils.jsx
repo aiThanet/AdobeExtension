@@ -439,19 +439,23 @@ function updatePrice(fileRef, newPrice) {
     var content = story.contents;
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
-      currentPriceText = getPriceText(content);
+      const currentPriceText = getPriceText(content);
       currentPrice = parseFloat(currentPriceText.replace(",", ""));
 
       if (currentPrice != newPrice) {
         app.findTextPreferences = app.changeTextPreferences = null;
         app.findTextPreferences.findWhat = content;
         // current logic only support up to 3 decimal place
-        newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        const newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
         doc.save(file);
       }
     }
+  }
+
+  if(!doc.saved){
+    doc.save(file);
   }
 
   doc.close();
