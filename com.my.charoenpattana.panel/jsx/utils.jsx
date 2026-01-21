@@ -617,7 +617,6 @@ function getLinkPosition(doc, link) {
 
 function moveAfterItem(itemCode) {
   var doc = app.activeDocument;
-  doc.documentPreferences.facingPages = false;
 
   var after_x = 0;
   var after_y = 0;
@@ -672,7 +671,6 @@ function moveAfterItem(itemCode) {
     moveToNextPosition(doc, moveItems[i]);
   }
 
-  doc.documentPreferences.facingPages = true;
   return true;
 }
 
