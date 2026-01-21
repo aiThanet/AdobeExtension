@@ -433,10 +433,19 @@ function updatePrice(fileRef, newPrice) {
   var file = File(fileRef);
   var doc = app.open(file);
   var currentPrice = -1;
+  var isMissingFont = false;
 
   for (var i = 0; i < app.activeDocument.stories.length; i++) {
     var story = app.activeDocument.stories.item(i);
     var content = story.contents;
+
+    var fonts = doc.fonts;
+    
+    for (var k = 0; k < fonts.length; k++) {
+      if (fonts[k].status === FontStatus.NOT_AVAILABLE) {
+        isMissingFont = true;
+      }
+    }
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
       const currentPriceText = getPriceText(content);
@@ -449,18 +458,25 @@ function updatePrice(fileRef, newPrice) {
         const newPriceText = content.replace(currentPriceText, newPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         app.changeTextPreferences.changeTo = newPriceText;
         doc.changeText();
-        doc.save(file);
+      }
+
+       var frames = story.textContainers;
+       for (var f = 0; f < frames.length; f++) {
+        var tf = frames[f];
+
+        tf.textFramePreferences.firstBaselineOffset =
+          FirstBaseline.CAP_HEIGHT;
       }
     }
   }
 
-  if(!doc.saved){
-    doc.save(file);
-  }
+  
+  doc.save(file);
+  
 
   doc.close();
   file.close();
-  return currentPrice;
+  return [currentPrice, isMissingFont];
 }
 
 function exportPDF(file, outputPath) {

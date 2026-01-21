@@ -45,6 +45,7 @@ function startUpdatePrice(files, priceList) {
     NotFoundPrice: [],
     UpdatedPrice: [],
     NotUpdatePrice: [],
+    MissingFont: []
   };
   progress(files.length);
 
@@ -75,8 +76,11 @@ function startUpdatePrice(files, priceList) {
       priceNotFound = true;
     }
     if (!priceNotFound) {
-      var oldPrice = updatePrice(files[i], newPrice);
+      var [oldPrice, isMissingFont] = updatePrice(files[i], newPrice);
       var row = [fileName, oldPrice, newPrice];
+      if(isMissingFont) {
+        result.MissingFont.push(fileName);
+      }
       if (oldPrice == newPrice) {
         result.NotUpdatePrice.push(row);
       } else {

@@ -2,6 +2,10 @@ $("#folderSelector").on("change", e => {
   const dt = new DataTransfer();
 
   for (file of e.target.files) {
+    if(file.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(file.name).toLowerCase().indexOf("[skip]") != -1) {
+      continue;
+    }
+    
     if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") == -1) {
       dt.items.add(file);
     }
@@ -66,6 +70,7 @@ $("#confirm").on("click", async e => {
     var html = "";
 
     var resData = {
+      'MissingFont' : [],
       'NotFoundPrice' : [],
       'UpdatedPrice' : [],
       'NotUpdatePrice' : []
@@ -81,6 +86,7 @@ $("#confirm").on("click", async e => {
           resData['NotFoundPrice'] = [...resData['NotFoundPrice'], ...data.NotFoundPrice]
           resData['UpdatedPrice'] = [...resData['UpdatedPrice'], ...data.UpdatedPrice]
           resData['NotUpdatePrice'] = [...resData['NotUpdatePrice'], ...data.NotUpdatePrice]
+          resData['MissingFont'] = [...resData['MissingFont'], ...data.MissingFont]
 
           resolve(res)
         });
@@ -88,9 +94,11 @@ $("#confirm").on("click", async e => {
     }
     console.log("end chuck");
 
+    html += buildTablePrice("ฟอนต์หาย", resData['MissingFont']);
     html += buildTable("รหัสสินค้าไม่ตรง", resData['NotFoundPrice']);
     html += buildTablePrice("รหัสสินค้าที่อัพเดต", resData['UpdatedPrice']);
     html += buildTablePrice("รหัสสินค้าที่ไม่เปลี่ยนแปลง", resData['NotUpdatePrice']);
+    
     $("#displayBody")[0].innerHTML = html;
 
   }
