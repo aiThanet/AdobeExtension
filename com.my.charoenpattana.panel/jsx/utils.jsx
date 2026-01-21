@@ -437,18 +437,20 @@ function updatePrice(fileRef, newPrice) {
 
   var stories = doc.stories;
 
+  var fonts = doc.fonts;
+    
+  for (var k = 0; k < fonts.length; k++) {
+    if (fonts[k].status === FontStatus.NOT_AVAILABLE) {
+      isMissingFont = true;
+    }
+    break;
+  }
+
   for (var i = 0; i < stories.length; i++) {
     var story = stories[i];
     var content = story.contents;
 
-    var fonts = doc.fonts;
     
-    for (var k = 0; k < fonts.length; k++) {
-      if (fonts[k].status === FontStatus.NOT_AVAILABLE) {
-        isMissingFont = true;
-      }
-      break;
-    }
 
     if (content.indexOf("\u0e23\u0e32\u0e04\u0e32") != -1) {
       const currentPriceText = getPriceText(content);
