@@ -602,8 +602,8 @@ function exportImageAllCatalogillustrator(file, outputPath) {
 }
 
 
-var X_POS = [4.5, 55.5, 106.5, 157.5];
-var Y_POS = [53, 92, 131, 170, 209, 248];
+var X_POS = [9, 57, 105, 153];
+var Y_POS = [49.75, 88, 126.25, 164.5, 202.75, 241];
 
 function getLinkPosition(doc, link) {
   link.show();
