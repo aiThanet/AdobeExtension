@@ -442,8 +442,8 @@ function updatePrice(fileRef, newPrice) {
   for (var k = 0; k < fonts.length; k++) {
     if (fonts[k].status === FontStatus.NOT_AVAILABLE) {
       isMissingFont = true;
+      break;
     }
-    break;
   }
 
   for (var i = 0; i < stories.length; i++) {
