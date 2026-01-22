@@ -516,7 +516,7 @@ function exportPDF(file, outputPath) {
     app.pdfExportPreferences.pageRange = "1-" + maxPage;
     doc.exportFile(ExportFormat.PDF_TYPE, destFile, false, "MyPreset");
       
-    if(!doc.saved){
+    if(doc.modified){
       doc.save(file);
     }
     doc.close(SaveOptions.NO);
