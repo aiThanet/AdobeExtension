@@ -75,25 +75,34 @@ $("#selectDirectoryBtn").on("click", async () => {
 });
 
 $("#folderSelector").on("change", async e => {
+  $("#folderStatus").empty();
   $("#loadingSpinner").show();
   $("#confirm").prop("disabled", true);
 
-  const dt = new DataTransfer();
+  // yield so the spinner paints before the (blocking) filter loop on large folders
+  await new Promise(resolve => setTimeout(resolve, 0));
 
-  for (file of e.target.files) {
-    if(file.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(file.name).toLowerCase().indexOf("[skip]") != -1) {
-      continue;
+  try {
+    const dt = new DataTransfer();
+
+    for (const file of e.target.files) {
+      if(file.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(file.name).toLowerCase().indexOf("[skip]") != -1) {
+        continue;
+      }
+      if (getExtension(file.name) == "ai" && getFileName(file.name).toLowerCase().indexOf("[book]") != -1) {
+        dt.items.add(file);
+      }
     }
-    if (getExtension(file.name) == "ai" && getFileName(file.name).toLowerCase().indexOf("[book]") != -1) {
-      dt.items.add(file);
-    }
+
+    e.target.files = dt.files;
+    displayFile(e.target.files);
+  } catch (err) {
+    console.error(err);
+    $("#folderStatus").html('<span class="text-danger">เกิดข้อผิดพลาด: ' + err.message + '</span>');
+  } finally {
+    $("#loadingSpinner").hide();
+    $("#confirm").prop("disabled", false);
   }
-
-  e.target.files = dt.files;
-  displayFile(e.target.files);
-
-  $("#loadingSpinner").hide();
-  $("#confirm").prop("disabled", false);
 });
 
 var buildTable = (name, files) => {
