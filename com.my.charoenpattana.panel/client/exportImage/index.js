@@ -1,26 +1,34 @@
-$("#folderSelector").on("change", async e => {
-  const target = e.target;
-  const status = $("#folderStatus");
-
-  status.html('<div class="spinner-border text-primary" role="status"></div><span class="mx-2">กำลังโหลดไฟล์...</span>');
+// Show the spinner when the picker OPENS, not in "change". On a 3000+ file folder the
+// browser freezes 30-60s enumerating the FileList BEFORE "change" fires, with the main
+// thread blocked. A spinner started in "change" is too late; painting it here (before the
+// freeze) keeps it on screen during the freeze.
+$("#folderSelector").on("click", () => {
+  $("#folderStatus").html('<div class="spinner-border text-primary" role="status"></div><span class="mx-2">กำลังโหลดไฟล์...</span>');
   $("#confirm").prop("disabled", true);
+});
 
-  // yield so the spinner paints before the (blocking) filter loop on large folders
-  await new Promise(resolve => setTimeout(resolve, 0));
+// picker closed without choosing a folder (supported on newer CEF/Chromium)
+$("#folderSelector").on("cancel", () => {
+  $("#folderStatus").empty();
+  $("#confirm").prop("disabled", false);
+});
+
+$("#folderSelector").on("change", e => {
+  const status = $("#folderStatus");
 
   try {
     const dt = new DataTransfer();
 
-    for (const file of target.files) {
+    for (const file of e.target.files) {
       if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") == -1) {
         dt.items.add(file);
       }
     }
 
-    target.files = dt.files;
-    displayFile(target.files);
+    e.target.files = dt.files;
+    displayFile(e.target.files);
 
-    status.html('<span class="text-success">เลือกไฟล์ .indd จำนวน ' + target.files.length + ' ไฟล์</span>');
+    status.html('<span class="text-success">เลือกไฟล์ .indd จำนวน ' + e.target.files.length + ' ไฟล์</span>');
   } catch (err) {
     console.error(err);
     status.html('<span class="text-danger">เกิดข้อผิดพลาด: ' + err.message + '</span>');
