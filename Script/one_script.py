@@ -71,10 +71,10 @@ def copy_all_images(input_folders, output_path):
 
 
 print("Step1/6: Clearing old files")
-clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ')
-clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม')
-clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า')
-content_pdf = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ')
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI')
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า')
+content_pdf = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
 if os.path.isfile(content_pdf):
     os.remove(content_pdf)
 
@@ -89,18 +89,18 @@ input_folders = [
     'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ',
     'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Illustrator',
 ]
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI'
 copy_all_images(input_folders, output_folder)
 
 print("Step4/6: Adding Page Numbers")
-input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม'
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า'
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า'
 add_page_number_all_images(input_folder, output_folder)
 
 
 print("Step5/6: Converting images to PDF...")
-input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า\\'
-output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า\\'
+output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
 # specify paper size (A4)
 a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
 layout_fun = img2pdf.get_layout_fun(a4inpt)
@@ -110,14 +110,14 @@ with open(output_file,"wb") as f:
 
 print("Step6/6: Combining PDFs and save...")
 merger = PdfWriter()
-pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\'
+pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 แยกไฟล์ PDF\\'
 pdfs = glob(pdf_folder + "*.pdf")
 for pdf in pdfs:
     merger.append(pdf)
 
 
 today_date = datetime.now().strftime("%Y-%m-%d")
-output_file = f'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 รวมเล่มPDF\\ม้าทอง {today_date}.pdf'
+output_file = f'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\05 รวมเล่มPDF\\ม้าทอง {today_date}.pdf'
 
 merger.write(output_file)
 merger.close()
