@@ -80,13 +80,13 @@ if os.path.isfile(content_pdf):
 
 print("Step2/6: Adding watermarks")
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Indesign'
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ'
 watermask_path = './Watermask_5.jpg'
 add_watermask_all_images(input_folder, watermask_path, output_folder)
 
 print("Step3/6: Copying originals into one folder")
 input_folders = [
-    'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ',
+    'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ',
     'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Illustrator',
 ]
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI'
