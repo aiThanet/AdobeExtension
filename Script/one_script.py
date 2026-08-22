@@ -4,6 +4,7 @@ from tqdm import tqdm
 from pathlib import Path
 
 import os
+import shutil
 import img2pdf
 from datetime import datetime
 from pypdf import PdfMerger, PdfWriter
@@ -56,21 +57,50 @@ def add_pagenumber(image_path, output_path, page_number=None):
 
 
 
-print("Step1/4: Adding watermarks")
-input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ'
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
+def clear_folder(folder_path):
+    for file_path in glob(folder_path + "/*"):
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
+
+def copy_all_images(input_folders, output_path):
+    os.makedirs(output_path, exist_ok=True)
+    for input_folder in input_folders:
+        for image_path in tqdm(glob(input_folder + "/*.jpg")):
+            shutil.copy2(image_path, output_path)
+
+
+print("Step1/6: Clearing old files")
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ')
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม')
+clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า')
+content_pdf = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
+if os.path.isfile(content_pdf):
+    os.remove(content_pdf)
+
+print("Step2/6: Adding watermarks")
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Indesign'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ'
 watermask_path = './Watermask_5.jpg'
 add_watermask_all_images(input_folder, watermask_path, output_folder)
 
-print("Step2/4: Adding Page Numbers")
-input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ'
-output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ - เลขหน้า'
+print("Step3/6: Copying originals into one folder")
+input_folders = [
+    'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ ลายน้ำ',
+    'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Illustrator',
+]
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม'
+copy_all_images(input_folders, output_folder)
+
+print("Step4/6: Adding Page Numbers")
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม'
+output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า'
 add_page_number_all_images(input_folder, output_folder)
 
 
-print("Step3/4: Converting images to PDF...")
-input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ ลายน้ำ - เลขหน้า\\'
-output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
+print("Step5/6: Converting images to PDF...")
+input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับ รวม - เลขหน้า\\'
+output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
 # specify paper size (A4)
 a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
 layout_fun = img2pdf.get_layout_fun(a4inpt)
@@ -78,16 +108,16 @@ layout_fun = img2pdf.get_layout_fun(a4inpt)
 with open(output_file,"wb") as f:
 	f.write(img2pdf.convert(glob(input_folder + "*.jpg"), layout_fun=layout_fun))
 
-print("Step4/4: Combining PDFs and save...")
+print("Step6/6: Combining PDFs and save...")
 merger = PdfWriter()
-pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 แยกไฟล์ PDF\\'
+pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 แยกไฟล์ PDF\\'
 pdfs = glob(pdf_folder + "*.pdf")
 for pdf in pdfs:
     merger.append(pdf)
 
 
 today_date = datetime.now().strftime("%Y-%m-%d")
-output_file = f'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 รวมเล่ม\\ม้าทอง {today_date}.pdf'
+output_file = f'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 รวมเล่มPDF\\ม้าทอง {today_date}.pdf'
 
 merger.write(output_file)
 merger.close()

@@ -13,6 +13,9 @@ const openDirectory = async (mode = "read") => {
     for await (const entry of dirHandle.values()) {
       const nestedPath = `${path}/${entry.name}`;
       if (entry.kind === "file") {
+        if(entry.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(entry.name).toLowerCase().indexOf("[skip]") != -1) {
+          continue;
+        }
         if (getExtension(entry.name) == "indd" && getFileName(entry.name).toLowerCase().indexOf("all") != -1) {
           files.push(
               entry.getFile().then((file) => {
@@ -83,6 +86,9 @@ $("#folderSelector").on("change", async e => {
     const dt = new DataTransfer();
 
     for (const file of e.target.files) {
+      if(file.path.toLowerCase().indexOf("[skip]") != -1 || getFileName(file.name).toLowerCase().indexOf("[skip]") != -1) {
+        continue;
+      }
       if (getExtension(file.name) == "indd" && getFileName(file.name).toLowerCase().indexOf("all") != -1) {
         dt.items.add(file);
       }
