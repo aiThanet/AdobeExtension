@@ -7,7 +7,7 @@ import os
 import shutil
 import img2pdf
 from datetime import datetime
-from pypdf import PdfMerger, PdfWriter
+from pypdf import PdfMerger, PdfReader, PdfWriter
 from pdf2image import convert_from_path
 
 def add_watermask_all_images(folder_path, watermask_path, output_path):
@@ -70,7 +70,38 @@ def copy_all_images(input_folders, output_path):
             shutil.copy2(image_path, output_path)
 
 
-print("Step1/6: Clearing old files")
+def compress_pdf(input_file, output_file, target_dpi=150, quality=85):
+    """Re-encode page images as JPEG at target_dpi, keeping text/vector as-is."""
+    reader = PdfReader(input_file)
+    writer = PdfWriter()
+    writer.append(reader)
+
+    for page in tqdm(writer.pages):
+        # page size in inches -> max useful pixel width/height at target_dpi
+        max_w = int(float(page.mediabox.width) / 72 * target_dpi)
+        max_h = int(float(page.mediabox.height) / 72 * target_dpi)
+        for img in page.images:
+            image = img.image
+            if image is None:
+                continue
+            if image.mode not in ("RGB", "L"):
+                image = image.convert("RGB")
+            if image.width > max_w or image.height > max_h:
+                image.thumbnail((max_w, max_h), Image.LANCZOS)
+            img.replace(image, quality=quality, optimize=True)
+
+    writer.compress_identical_objects()
+    with open(output_file, "wb") as f:
+        writer.write(f)
+
+
+def copy_files(file_paths, output_path):
+    os.makedirs(output_path, exist_ok=True)
+    for file_path in file_paths:
+        shutil.copy2(file_path, output_path)
+
+
+print("Step1/8: Clearing old files")
 clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ')
 clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI')
 clear_folder('C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า')
@@ -78,13 +109,13 @@ content_pdf = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิม�
 if os.path.isfile(content_pdf):
     os.remove(content_pdf)
 
-print("Step2/6: Adding watermarks")
+print("Step2/8: Adding watermarks")
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Indesign'
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ'
 watermask_path = './Watermask_5.jpg'
 add_watermask_all_images(input_folder, watermask_path, output_folder)
 
-print("Step3/6: Copying originals into one folder")
+print("Step3/8: Copying originals into one folder")
 input_folders = [
     'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\01 ต้นฉบับ Indesign ลายน้ำ',
     'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\00 ต้นฉบับ Illustrator',
@@ -92,13 +123,13 @@ input_folders = [
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI'
 copy_all_images(input_folders, output_folder)
 
-print("Step4/6: Adding Page Numbers")
+print("Step4/8: Adding Page Numbers")
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\02 ต้นฉบับรวม ID+AI'
 output_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า'
 add_page_number_all_images(input_folder, output_folder)
 
 
-print("Step5/6: Converting images to PDF...")
+print("Step5/8: Converting images to PDF...")
 input_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\03 ต้นฉบับรวม - มีเลขหน้า\\'
 output_file = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 แยกไฟล์ PDF\\03 เนื้อหา.pdf'
 # specify paper size (A4)
@@ -108,7 +139,7 @@ layout_fun = img2pdf.get_layout_fun(a4inpt)
 with open(output_file,"wb") as f:
 	f.write(img2pdf.convert(glob(input_folder + "*.jpg"), layout_fun=layout_fun))
 
-print("Step6/6: Combining PDFs and save...")
+print("Step6/8: Combining PDFs and save...")
 merger = PdfWriter()
 pdf_folder = 'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิมพ์\\04 แยกไฟล์ PDF\\'
 pdfs = glob(pdf_folder + "*.pdf")
@@ -121,6 +152,15 @@ output_file = f'C:\\Users\\jpndesign.JPN\\Documents\\ส่งโรงพิม
 
 merger.write(output_file)
 merger.close()
+
+print("Step7/8: Compressing PDF for web...")
+compressed_file = output_file.replace('.pdf', '_compressed.pdf')
+compress_pdf(output_file, compressed_file)
+print(f"  {os.path.getsize(output_file) / 1e6:.1f} MB -> {os.path.getsize(compressed_file) / 1e6:.1f} MB")
+
+print("Step8/8: Copying PDFs to NAS...")
+copy_files([output_file, compressed_file], r'\\JPNNAS\Shared\แคตตาล็อตม้าทอง')
+
 	
 # print("Step4/4: Exporting PDF pages to images...")
 
