@@ -29,7 +29,7 @@ $("#folderSelector").on("change", async e => {
   }
 });
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   if ($("#folderSelector")[0].files.length != 1) {
     console.log("over 1 file");
     alert("โปรดเลือกแค่ 1 ไฟล์เท่านั้น");
@@ -43,23 +43,22 @@ $("#confirm").on("click", e => {
   }
   if (confirm(`ต้องการเปลี่ยนชื่อจาก "${srcName}" ไปเป็น "${destName}" หรือไม่`)) {
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    jsx.evalScript(`startChangeName(${JSON.stringify(files)}, "${srcName}", "${destName}")`, res => {
-      console.log(res);
-      data = JSON.parse(res);
-      $("#displayBody").empty();
-      $("#displayBody")[0].innerHTML = "<div class='row mx-1 my-2'><h2 class='text-center'>ผลลัพธ์</h2><div><table class='table'><thead><tr><th>ไฟล์</th></tr></thead><tbody id='resultDisplay'></tbody></table></div>";
+    const res = await runJsx(`startChangeName(${JSON.stringify(files)}, ${JSON.stringify(srcName)}, ${JSON.stringify(destName)})`);
+    console.log(res);
+    data = JSON.parse(res);
+    $("#displayBody").empty();
+    $("#displayBody")[0].innerHTML = "<div class='row mx-1 my-2'><h2 class='text-center'>ผลลัพธ์</h2><div><table class='table'><thead><tr><th>ไฟล์</th></tr></thead><tbody id='resultDisplay'></tbody></table></div>";
 
-      resultHtml = "";
-      for (k in data) {
-        if (data[k].length != 0) {
-          resultHtml += `<tr><td class='text-center bg-danger'>${k}</td></tr>`;
-          for (link of data[k]) {
-            resultHtml += `<tr><td>${link}</td></tr>`;
-          }
+    resultHtml = "";
+    for (k in data) {
+      if (data[k].length != 0) {
+        resultHtml += `<tr><td class='text-center bg-danger'>${k}</td></tr>`;
+        for (link of data[k]) {
+          resultHtml += `<tr><td>${link}</td></tr>`;
         }
       }
-      $("#resultDisplay")[0].innerHTML = resultHtml;
-    });
+    }
+    $("#resultDisplay")[0].innerHTML = resultHtml;
   }
 });
 

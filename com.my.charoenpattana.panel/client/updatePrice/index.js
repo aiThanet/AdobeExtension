@@ -80,6 +80,7 @@ $("#confirm").on("click", async (e) => {
 
   if (confirm(`ต้องการอัพเดตราคาหรือไม่`)) {
     $("#confirm").prop("disabled", true);
+    try {
     var files = Array.from($("#folderSelector")[0].files).map((f) => f.path);
     files.sort();
 
@@ -93,6 +94,7 @@ $("#confirm").on("click", async (e) => {
       url: "http://mathongapi.jpn.local/price/first",
       error: (err) => {
         alert("ลองใหม่อีกครั้ง: " + err.statusText);
+        err.alerted = true; // the await below rejects with this same object
       },
       timeout: 30000,
     });
@@ -113,34 +115,28 @@ $("#confirm").on("click", async (e) => {
 
     for (let chunks of fileChunks) {
       console.log("start chunks", i++);
-      await new Promise((resolve, reject) => {
-        jsx.evalScript(
-          `startUpdatePrice(${JSON.stringify(chunks)}, ${JSON.stringify(priceList)})`,
-          (res) => {
-            console.log("result :", res);
-            data = JSON.parse(res);
+      const res = await runJsx(
+        `startUpdatePrice(${JSON.stringify(chunks)}, ${JSON.stringify(priceList)})`,
+      );
+      console.log("result :", res);
+      data = JSON.parse(res);
 
-            resData["NotFoundPrice"] = [
-              ...resData["NotFoundPrice"],
-              ...data.NotFoundPrice,
-            ];
-            resData["UpdatedPrice"] = [
-              ...resData["UpdatedPrice"],
-              ...data.UpdatedPrice,
-            ];
-            resData["NotUpdatePrice"] = [
-              ...resData["NotUpdatePrice"],
-              ...data.NotUpdatePrice,
-            ];
-            resData["MissingFont"] = [
-              ...resData["MissingFont"],
-              ...data.MissingFont,
-            ];
-
-            resolve(res);
-          },
-        );
-      });
+      resData["NotFoundPrice"] = [
+        ...resData["NotFoundPrice"],
+        ...data.NotFoundPrice,
+      ];
+      resData["UpdatedPrice"] = [
+        ...resData["UpdatedPrice"],
+        ...data.UpdatedPrice,
+      ];
+      resData["NotUpdatePrice"] = [
+        ...resData["NotUpdatePrice"],
+        ...data.NotUpdatePrice,
+      ];
+      resData["MissingFont"] = [
+        ...resData["MissingFont"],
+        ...data.MissingFont,
+      ];
     }
     console.log("end chuck");
 
@@ -153,5 +149,8 @@ $("#confirm").on("click", async (e) => {
     );
 
     $("#displayBody")[0].innerHTML = html;
+    } finally {
+      $("#confirm").prop("disabled", false);
+    }
   }
 });

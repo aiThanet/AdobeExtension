@@ -73,33 +73,22 @@ $("#confirm").on("click", async e => {
       fileChunks.push(files.slice(i, i + chunkSize));
     }
 
-    let outputPath = await (new Promise((resolve, reject) => {
-      jsx.evalScript("selectFolder_JPNDESIGN_IMAGE()", output => {
-        resolve(output)
-      })
-    }));
+    try {
+      let outputPath = await runJsx("selectFolder_JPNDESIGN_IMAGE()");
 
-    var i = 0;
-    console.log("start");
+      var i = 0;
+      console.log("start");
 
-    for (let chunks of fileChunks) {
-      console.log("start chunks", i++);
-      await (new Promise((resolve, reject) => {
-        jsx.evalScript(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${outputPath})`, res => {
-          console.log("result :", res);
-          resolve(res)
-        });
-      }));
+      for (let chunks of fileChunks) {
+        console.log("start chunks", i++);
+        console.log("result :", await runJsx(`startExportImage(${JSON.stringify(chunks)}, ${JSON.stringify(lastModified)}, ${outputPath})`));
+      }
+
+      console.log("start trim");
+      console.log("Trim ", await runJsx("runTrimScript()"));
+      console.log("end trim");
+    } finally {
+      $("#confirm").prop("disabled", false);
     }
-
-    console.log("start trim");
-    await (new Promise((resolve, reject) => {
-      jsx.evalScript("runTrimScript()", res => {
-        console.log("Trim ", res)
-        resolve(res)
-      })
-    }));
-
-    console.log("end trim");
   }
 });

@@ -55,7 +55,7 @@ const openDirectory = async (mode = "read") => {
     $("#selectDirectoryBtn").prop("disabled", false);
   } catch (err) {
     if (err.name !== "AbortError") {
-      console.error(err.name, err.message);
+      alert("เกิดข้อผิดพลาด:\n" + err.name + ": " + err.message);
     }
   }
   return directoryStructure;
@@ -127,6 +127,7 @@ $("#confirm").on("click", async e => {
   $("#selectDirectoryBtn").prop("disabled", true);
   $("#folderSelector").prop("disabled", true);
 
+  try {
   if (confirm(`ต้องการ Export Image หรือไม่`)) {
     $("#confirm").prop("disabled", true);
     var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
@@ -139,11 +140,7 @@ $("#confirm").on("click", async e => {
     }
 
 
-    let outputPath = await (new Promise((resolve, reject) => {
-      jsx.evalScript("selectFolderFromDialog()", output => {
-        resolve(output)
-      })
-    }));
+    let outputPath = await runJsx("selectFolderFromDialog()");
     
    
     var i = 0;
@@ -151,19 +148,14 @@ $("#confirm").on("click", async e => {
 
     for (let chunks of fileChunks) {
       console.log("start chunks", i++);
-      await (new Promise((resolve, reject) => {
-        jsx.evalScript(`startExportImageAllCatalogillustrator(${JSON.stringify(chunks)}, ${outputPath} )`, res => {
-          console.log("result :", res);
-          resolve(res)
-        });
-      }));
+      console.log("result :", await runJsx(`startExportImageAllCatalogillustrator(${JSON.stringify(chunks)}, ${outputPath} )`));
     }
     console.log("end chuck");
-
+  }
+  } finally {
     $("#loadingSpinner").hide();
     $("#confirm").prop("disabled", false);
     $("#selectDirectoryBtn").prop("disabled", false);
     $("#folderSelector").prop("disabled", false);
-
   }
 });

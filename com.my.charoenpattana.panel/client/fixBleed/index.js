@@ -29,7 +29,7 @@ $("#folderSelector").on("change", async e => {
   }
 });
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
@@ -37,11 +37,13 @@ $("#confirm").on("click", e => {
 
   if (confirm(`ต้องการ Fix Bleed หรือไม่`)) {
     $("#confirm").prop("disabled", true);
-    var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    files.sort();
-    jsx.evalScript(`startFixBleed(${JSON.stringify(files)})`, res => {
-      console.log(res);
-    });
+    try {
+      var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
+      files.sort();
+      console.log(await runJsx(`startFixBleed(${JSON.stringify(files)})`));
+    } finally {
+      $("#confirm").prop("disabled", false);
+    }
     return;
   }
 });

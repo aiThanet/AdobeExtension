@@ -44,7 +44,7 @@ var buildTable = (name, files) => {
   return html;
 };
 
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   if ($("#folderSelector")[0].files.length < 1) {
     alert("โปรดเลือกไฟล์");
     return;
@@ -52,9 +52,10 @@ $("#confirm").on("click", e => {
 
   if (confirm(`ต้องการ Export PDF หรือไม่`)) {
     $("#confirm").prop("disabled", true);
-    var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
-    files.sort()
-    jsx.evalScript(`startExportPDFillustrator(${JSON.stringify(files)})`, res => {
+    try {
+      var files = Array.from($("#folderSelector")[0].files).map(f => f.path);
+      files.sort()
+      const res = await runJsx(`startExportPDFillustrator(${JSON.stringify(files)})`);
       console.log(res);
       data = JSON.parse(res);
 
@@ -63,7 +64,9 @@ $("#confirm").on("click", e => {
       var html = buildTable('ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ', data);
 
       $("#displayBody")[0].innerHTML = html;
-    });
+    } finally {
+      $("#confirm").prop("disabled", false);
+    }
     return;
   }
 });

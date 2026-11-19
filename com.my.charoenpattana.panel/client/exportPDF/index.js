@@ -63,31 +63,26 @@ $("#confirm").on("click", async e => {
     }
 
 
-    let outputPath = await (new Promise((resolve, reject) => {
-      jsx.evalScript("selectFolderFromDialog()", output => {
-        resolve(output)
-      })
-    }));
-    
-   
-    var i = 0;
-    console.log("start");
-    $("#displayBody").empty();
-    for (let chunks of fileChunks) {
-      console.log("start chunks", i++);
-      await (new Promise((resolve, reject) => {
-        jsx.evalScript(`startExportPDF(${JSON.stringify(chunks)}, ${outputPath})`, res => {
-          console.log(res);
-          
-          data = JSON.parse(res);
-          
-          var html = buildTable('ไฟล์ Export ไม่เสร็จ : ชื่อซ้ำ', data);
-          $("#displayBody")[0].innerHTML += html;
-          resolve(res)
-        });
-      }));
+    try {
+      let outputPath = await runJsx("selectFolderFromDialog()");
+
+      var i = 0;
+      console.log("start");
+      $("#displayBody").empty();
+      for (let chunks of fileChunks) {
+        console.log("start chunks", i++);
+        const res = await runJsx(`startExportPDF(${JSON.stringify(chunks)}, ${outputPath})`);
+        console.log(res);
+
+        data = JSON.parse(res);
+
+        var html = buildTable('ไฟล์ Export ไม่เสร็จ', data);
+        $("#displayBody")[0].innerHTML += html;
+      }
+      console.log("end chuck");
+    } finally {
+      $("#confirm").prop("disabled", false);
     }
-    console.log("end chuck");
 
 
     
