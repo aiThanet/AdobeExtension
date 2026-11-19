@@ -18,19 +18,6 @@ Array.prototype.indexOf = function (obj) {
   return -1;
 };
 
-Array.prototype.indexOfMinimum = function () {
-  var i = this.length;
-  var min_val = 999999999;
-  var min_idx = -1;
-  while (i--) {
-    if (this[i] < min_val) {
-      min_val = this[i];
-      min_idx = i;
-    }
-  }
-  return min_idx;
-};
-
 /* Get full path of file */
 File.prototype.getFullPath = function () {
   return this.fsName;
@@ -623,119 +610,109 @@ function exportImageAllCatalogillustrator(file, outputPath) {
 }
 
 
-var X_POS = [9, 57, 105, 153];
-var Y_POS = [49.75, 88, 126.25, 164.5, 202.75, 241];
+/* ===== Move Item =====
+ * Product = top-level page item (parent is a Spread) holding a placed .indd link.
+ * Slots are the current product positions in reading order: page -> row -> left.
+ */
 
-function getLinkPosition(doc, link) {
-  link.show();
-  var aSel = doc.selection[0];
-  var SelBounds = aSel.geometricBounds;
-  var y = SelBounds[0];
-  var x = SelBounds[1];
-  var page = Number(aSel.parentPage.name);
-  return [y, x, page];
+// rowTol: tops within this distance (doc units, mm) count as the same row
+function orderProducts(products, rowTol) {
+  var sorted = products.slice(0);
+  sorted.sort(function (a, b) {
+    return a.page - b.page || a.top - b.top;
+  });
+  var out = [];
+  var row = [];
+  var rowPage, rowTop;
+  function flush() {
+    row.sort(function (a, b) {
+      return a.left - b.left;
+    });
+    out = out.concat(row);
+    row = [];
+  }
+  for (var i = 0; i < sorted.length; i++) {
+    var p = sorted[i];
+    if (row.length && (p.page != rowPage || p.top - rowTop > rowTol)) flush();
+    if (!row.length) {
+      rowPage = p.page;
+      rowTop = p.top;
+    }
+    row.push(p);
+  }
+  flush();
+  return out;
 }
 
-function moveAfterItem(itemCode) {
-  var doc = app.activeDocument;
-
-  var after_x = 0;
-  var after_y = 0;
-  var after_page = 0;
-  var moveItems = [];
-  var isFound = false;
-
-  var links = doc.links;
-
-  // Find Postion of Move Item
-  for (i = 0; i < links.length; i++) {
-    var link = links[i];
-    var linkFile = File(link.filePath);
-    var linkName = linkFile.getFileName();
-    var linkExtension = linkFile.getFileExtension();
-
-    if (linkName.indexOf(itemCode) != -1 && linkExtension == "indd") {
-      var info = getLinkPosition(doc, link);
-      after_y = info[0];
-      after_x = info[1];
-      after_page = info[2];
-      isFound = true;
-      break;
-    }
-    linkFile.close();
+function findTargetIndex(ordered, code) {
+  for (var i = 0; i < ordered.length; i++) {
+    if (ordered[i].code.indexOf(code) != -1) return i;
   }
-
-  if (!isFound) {
-    return false;
-  }
-
-  // Find Movalbe Item by comparing position
-  for (i = 0; i < links.length; i++) {
-    var link = links[i];
-    var linkFile = File(link.filePath);
-    var linkName = linkFile.getFileName();
-    var linkExtension = linkFile.getFileExtension();
-    if (linkExtension == "indd") {
-      var info = getLinkPosition(doc, link);
-      y = info[0];
-      x = info[1];
-      page = info[2];
-
-      if (page > after_page || (page == after_page && ((x - after_x > 5 && y == after_y) || y - after_y > 5))) {
-        moveItems.push(link);
-      }
-    }
-    linkFile.close();
-  }
-
-  for (var i = 0; i < moveItems.length; i++) {
-    moveToNextPosition(doc, moveItems[i]);
-  }
-
-  return true;
+  return -1;
 }
 
-function moveToNextPosition(doc, link) {
-  var parent = link;
-
-  while (!(parent.parent instanceof Spread)) {
-    parent = parent.parent;
-  }
-
-  if (parent instanceof Link) {
-    parent.show();
-    var aSel = doc.selection[0];
+// Insert: products after t shift forward one slot; the last product stays (user moves it).
+// Remove: products after t shift back one slot.
+function planMoves(count, t, mode) {
+  var moves = [];
+  if (mode == "remove") {
+    for (var i = t + 1; i < count; i++) moves.push({ from: i, to: i - 1 });
   } else {
-    var aSel = parent;
+    for (var j = count - 2; j > t; j--) moves.push({ from: j, to: j + 1 });
   }
-  var SelBounds = aSel.geometricBounds;
-  y = SelBounds[0];
-  x = SelBounds[1];
-  check_x = [];
-  check_y = [];
-  for (var i = 0; i < X_POS.length; i++) {
-    check_x.push(Math.abs(X_POS[i] - x));
-  }
-  for (var i = 0; i < Y_POS.length; i++) {
-    check_y.push(Math.abs(Y_POS[i] - y));
-  }
-  var minIndex_x = check_x.indexOfMinimum();
-  var minIndex_y = check_y.indexOfMinimum();
-
-  if (minIndex_x == check_x.length - 1) {
-    if (minIndex_y != check_y.length - 1) {
-      parent.move(Array(X_POS[0], Y_POS[minIndex_y + 1]));
-    } else {
-      cur_page = Number(parent.parentPage.name);
-      if (Number(cur_page) < doc.pages.length) {
-        parent.move(doc.pages[Number(cur_page)]);
-        parent.move(Array(X_POS[0], Y_POS[0]));
-      }
-    }
-  } else {
-    parent.move(Array(X_POS[minIndex_x + 1], y));
-  }
+  return moves;
 }
+
+function collectProducts(doc) {
+  var byId = {};
+  for (var i = 0; i < doc.links.length; i++) {
+    var link = doc.links[i];
+    var file = File(link.filePath);
+    if (file.getFileExtension() != "indd") continue;
+
+    var item = link;
+    var depth = 0;
+    while (item.parent && !(item.parent instanceof Spread)) {
+      item = item.parent;
+      depth++;
+    }
+    if (!(item.parent instanceof Spread) || !item.parentPage) continue; // master page / pasteboard
+
+    // nested links inside a placed .indd resolve to the same item: keep the outermost link's name
+    var prev = byId[item.id];
+    if (prev && prev.depth <= depth) continue;
+    var b = item.geometricBounds;
+    byId[item.id] = { item: item, page: item.parentPage.documentOffset, top: b[0], left: b[1], code: file.getFileName(), depth: depth };
+  }
+  var products = [];
+  for (var id in byId) products.push(byId[id]);
+  return products;
+}
+
+function moveItems(doc, code, mode) {
+  var ordered = orderProducts(collectProducts(doc), 5);
+  var t = findTargetIndex(ordered, code);
+  if (t == -1) throw new Error("ไม่พบรหัส " + code);
+
+  var n = ordered.length;
+  var slots = [];
+  for (var i = 0; i < n; i++) slots.push({ page: ordered[i].page, top: ordered[i].top, left: ordered[i].left });
+
+  if (mode == "remove") ordered[t].item.remove();
+
+  var moves = planMoves(n, t, mode);
+  for (var j = 0; j < moves.length; j++) {
+    var item = ordered[moves[j].from].item;
+    var to = slots[moves[j].to];
+    if (item.parentPage.documentOffset != to.page) item.move(doc.pages[to.page]);
+    item.move([to.left, to.top]);
+  }
+
+  var msg = (mode == "remove" ? "ลบ " + ordered[t].code + " แล้ว\n" : "") + "ย้าย " + moves.length + " รายการ";
+  if (mode != "remove" && t < n - 1) msg += "\nโปรดย้าย " + ordered[n - 1].code + " เอง";
+  return msg;
+}
+
 
 function fixBleed(file) {
   var doc = app.open(file);

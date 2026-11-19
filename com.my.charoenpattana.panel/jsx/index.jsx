@@ -182,10 +182,12 @@ function startExportImageAllCatalogillustrator(files, outputPath) {
   return "";
 }
 
-function startMoveItem(goodCode) {
+// mode: "insert" | "remove"
+function startMoveItem(goodCode, mode) {
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.neverInteract;
-  moveAfterItem(goodCode);
+  var res = moveItems(app.activeDocument, goodCode, mode);
   app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  return res;
 }
 
 function startFixBleed(files) {

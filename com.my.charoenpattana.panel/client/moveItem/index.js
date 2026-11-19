@@ -1,13 +1,13 @@
-$("#confirm").on("click", e => {
+$("#confirm").on("click", async e => {
   var goodcode = $("#goodcode").val();
   if (goodcode == "") {
     alert("โปรดระบุรหัสที่ต้องการเริ่มขยับ");
     return;
   }
-  if (confirm(`ต้องการเริ่มขยับจาก "${goodcode}" หรือไม่`)) {
-    jsx.evalScript(`startMoveItem("${goodcode}")`, res => {
-      console.log(res);
-      alert("สำเร็จ โปรดตรวจสอบก่อนบันทึก");
-    });
+  var mode = $("input[name=mode]:checked").val();
+  var question = mode == "remove" ? `ต้องการลบ "${goodcode}" และเลื่อนรายการถัดไปขึ้น หรือไม่` : `ต้องการเริ่มขยับจาก "${goodcode}" หรือไม่`;
+  if (confirm(question)) {
+    var res = await runJsx(`startMoveItem(${JSON.stringify(goodcode)}, "${mode}")`);
+    alert("สำเร็จ โปรดตรวจสอบก่อนบันทึก\n" + res);
   }
 });
