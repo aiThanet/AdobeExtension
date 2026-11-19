@@ -71,6 +71,7 @@ var runJsx = script =>
   new Promise((resolve, reject) => {
     jsx.evalScript(script, res => {
       if (isJsxError(res)) {
+        jsx.evalScript("resetHostState()");
         alert("เกิดข้อผิดพลาด:\n" + res);
         var err = new Error(res);
         err.alerted = true;

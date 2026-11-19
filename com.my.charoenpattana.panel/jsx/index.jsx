@@ -113,7 +113,7 @@ function startExportPDF(files, outputPath) {
       progress.increment();
       file.close();
     } catch (e) {
-      console.error("Export error:\n" + e);
+      notSavingFiles.push(fileName + " : " + e);
     }
   }
   progress.close();
@@ -279,4 +279,15 @@ function selectFolder_JPNDESIGN_IMAGE() {
 function selectFolderFromDialog() {
   var folder = Folder.selectDialog("Select folder");
   return JSON.lave(folder.fsName);
+}
+
+// Called by runJsx (js/myutil.js) after any host error: undo what start*() left behind.
+function resetHostState() {
+  if (app.name.indexOf("InDesign") != -1) {
+    app.scriptPreferences.userInteractionLevel = UserInteractionLevels.interactWithAll;
+  } else {
+    app.userInteractionLevel = UserInteractionLevel.DISPLAYALERTS;
+  }
+  if (progress.close) progress.close();
+  return "";
 }
