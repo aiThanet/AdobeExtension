@@ -280,6 +280,7 @@ function selectFolder_JPNDESIGN_IMAGE() {
 
 function selectFolderFromDialog() {
   var folder = Folder.selectDialog("Select folder");
+  if (!folder) throw new Error("ไม่ได้เลือกโฟลเดอร์");
   return JSON.lave(folder.fsName);
 }
 

@@ -672,7 +672,7 @@ function collectProducts(doc) {
 
     var item = link;
     var depth = 0;
-    while (item.parent && !(item.parent instanceof Spread)) {
+    while (item.parent && !(item.parent instanceof Spread) && !(item instanceof Document)) {
       item = item.parent;
       depth++;
     }
@@ -693,6 +693,7 @@ function moveItems(doc, code, mode) {
   var ordered = orderProducts(collectProducts(doc), 5);
   var t = findTargetIndex(ordered, code);
   if (t == -1) throw new Error("ไม่พบรหัส " + code);
+  if (mode != "remove" && t == ordered.length - 1) throw new Error(code + " เป็นรายการสุดท้าย ไม่มีรายการให้เลื่อน");
 
   var n = ordered.length;
   var slots = [];
