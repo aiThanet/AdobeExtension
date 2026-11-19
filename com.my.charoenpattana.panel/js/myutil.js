@@ -63,3 +63,30 @@ var deleteFileByIdx = idx => {
   selector.files = dt.files;
   displayFile(selector.files);
 };
+
+// Host (JSX.js) errors come back as a plain string, e.g. "Error 21: ...\nLine: ..."
+var isJsxError = res => res === "EvalScript error." || /^[A-Za-z]*Error[^:\n]*: /.test(res);
+
+var runJsx = script =>
+  new Promise((resolve, reject) => {
+    jsx.evalScript(script, res => {
+      if (isJsxError(res)) {
+        alert("เกิดข้อผิดพลาด:\n" + res);
+        var err = new Error(res);
+        err.alerted = true;
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+
+window.onerror = (message, source, line, col, error) => {
+  alert("เกิดข้อผิดพลาด:\n" + message + "\n" + source + ":" + line + "\n" + ((error && error.stack) || ""));
+};
+
+window.addEventListener("unhandledrejection", e => {
+  var r = e.reason;
+  if (r && r.alerted) return;
+  alert("เกิดข้อผิดพลาด:\n" + ((r && (r.stack || r.message || r.statusText)) || r));
+});
