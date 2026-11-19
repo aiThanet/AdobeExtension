@@ -682,11 +682,63 @@ function collectProducts(doc) {
     var prev = byId[item.id];
     if (prev && prev.depth <= depth) continue;
     var b = item.geometricBounds;
-    byId[item.id] = { item: item, page: item.parentPage.documentOffset, top: b[0], left: b[1], code: file.getFileName(), depth: depth };
+    byId[item.id] = { item: item, page: item.parentPage.documentOffset, top: b[0], left: b[1], width: b[3] - b[1], height: b[2] - b[0], code: file.getFileName(), depth: depth };
   }
   var products = [];
   for (var id in byId) products.push(byId[id]);
   return products;
+}
+
+// Free slot after slots[i] (the last product), from positions before any move.
+// Rule 1: copy the nearest earlier page's layout (next index there; page full -> next page, first slot).
+// Rule 2 (no earlier page): step right by width + gap; past right edge -> next row; past bottom -> next page.
+// pageBox = {right, bottom} of slots[i]'s page (trim edge). Returns {page, top, left} or null (no next page).
+function nextSlot(slots, i, rowTol, pageBox, pageCount) {
+  var cur = slots[i];
+  var onPage = [];
+  var prev = [];
+  var prevPage = -1;
+  for (var k = 0; k < slots.length; k++) {
+    var s = slots[k];
+    if (s.page == cur.page) onPage.push(s);
+    else if (s.page < cur.page && s.page >= prevPage) {
+      if (s.page > prevPage) prev = [];
+      prevPage = s.page;
+      prev.push(s);
+    }
+  }
+  var j = onPage.length - 1; // cur is the last product, so the last on its page
+
+  if (prev.length) {
+    if (j + 1 < prev.length) return { page: cur.page, top: prev[j + 1].top, left: prev[j + 1].left };
+    return cur.page + 1 < pageCount ? { page: cur.page + 1, top: prev[0].top, left: prev[0].left } : null;
+  }
+
+  // gaps measured from the page's own products; 0 when there is no pair to measure
+  var hGap = 0, vGap = 0, hFound = false, vFound = false;
+  for (var m = 0; m + 1 < onPage.length; m++) {
+    var a = onPage[m], b = onPage[m + 1];
+    if (Math.abs(b.top - a.top) <= rowTol) {
+      if (!hFound) { hGap = b.left - (a.left + a.width); hFound = true; }
+    } else if (!vFound) { vGap = b.top - (a.top + a.height); vFound = true; }
+  }
+
+  var left = cur.left + cur.width + hGap;
+  if (left + cur.width <= pageBox.right) return { page: cur.page, top: cur.top, left: left };
+
+  var rowStart = cur;
+  for (var r = 0; r < onPage.length; r++) {
+    if (Math.abs(onPage[r].top - cur.top) <= rowTol) { rowStart = onPage[r]; break; }
+  }
+  var top = cur.top + cur.height + vGap;
+  if (top + cur.height <= pageBox.bottom) return { page: cur.page, top: top, left: rowStart.left };
+
+  return cur.page + 1 < pageCount ? { page: cur.page + 1, top: onPage[0].top, left: onPage[0].left } : null;
+}
+
+function moveTo(doc, item, to) {
+  if (item.parentPage.documentOffset != to.page) item.move(doc.pages[to.page]);
+  item.move([to.left, to.top]);
 }
 
 function moveItems(doc, code, mode) {
@@ -697,20 +749,32 @@ function moveItems(doc, code, mode) {
 
   var n = ordered.length;
   var slots = [];
-  for (var i = 0; i < n; i++) slots.push({ page: ordered[i].page, top: ordered[i].top, left: ordered[i].left });
+  for (var i = 0; i < n; i++) {
+    var o = ordered[i];
+    slots.push({ page: o.page, top: o.top, left: o.left, width: o.width, height: o.height });
+  }
+
+  // insert: the last product goes to the free slot after its own (computed before anything moves)
+  var lastTo = null;
+  if (mode != "remove") {
+    var pb = doc.pages[slots[n - 1].page].bounds; // [top, left, bottom, right]
+    lastTo = nextSlot(slots, n - 1, 5, { right: pb[3], bottom: pb[2] }, doc.pages.length);
+  }
 
   if (mode == "remove") ordered[t].item.remove();
 
   var moves = planMoves(n, t, mode);
-  for (var j = 0; j < moves.length; j++) {
-    var item = ordered[moves[j].from].item;
-    var to = slots[moves[j].to];
-    if (item.parentPage.documentOffset != to.page) item.move(doc.pages[to.page]);
-    item.move([to.left, to.top]);
-  }
+  for (var j = 0; j < moves.length; j++) moveTo(doc, ordered[moves[j].from].item, slots[moves[j].to]);
 
   var msg = (mode == "remove" ? "ลบ " + ordered[t].code + " แล้ว\n" : "") + "ย้าย " + moves.length + " รายการ";
-  if (mode != "remove" && t < n - 1) msg += "\nโปรดย้าย " + ordered[n - 1].code + " เอง";
+  if (mode != "remove") {
+    if (lastTo) {
+      moveTo(doc, ordered[n - 1].item, lastTo);
+      msg = "ย้าย " + (moves.length + 1) + " รายการ";
+    } else {
+      msg += "\nไม่มีหน้าถัดไป โปรดย้าย " + ordered[n - 1].code + " เอง";
+    }
+  }
   return msg;
 }
 

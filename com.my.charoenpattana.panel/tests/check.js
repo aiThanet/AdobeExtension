@@ -31,4 +31,22 @@ same(planMoves(5, 4, "insert"), []);
 same(planMoves(5, 1, "remove"), [{ from: 2, to: 1 }, { from: 3, to: 2 }, { from: 4, to: 3 }]);
 same(planMoves(5, 4, "remove"), []);
 
+// nextSlot: where the last product goes on insert. Products 40 wide, 30 tall.
+const { nextSlot } = host;
+const S = (page, top, left) => ({ page, top, left, width: 40, height: 30 });
+const A4 = { right: 210, bottom: 297 };
+const grid = [S(0, 50, 9), S(0, 50, 57), S(0, 90, 9), S(0, 90, 57)]; // page 0: 2x2
+// rule 1: copy the previous page's layout
+same(nextSlot([...grid, S(1, 50, 9)], 4, 5, A4, 3), { page: 1, top: 50, left: 57 });
+same(nextSlot([...grid, S(1, 50, 9), S(1, 50, 57), S(1, 90, 9), S(1, 90, 57)], 7, 5, A4, 3), { page: 2, top: 50, left: 9 }); // page full
+assert.equal(nextSlot([...grid, S(1, 50, 9), S(1, 50, 57), S(1, 90, 9), S(1, 90, 57)], 7, 5, A4, 2), null); // no next page
+// rule 2: first page, measure gaps (h gap 57-49=8, v gap 0 with one row)
+const row = [S(0, 50, 9), S(0, 50, 57)];
+same(nextSlot(row, 1, 5, A4, 1), { page: 0, top: 50, left: 105 });
+same(nextSlot(row, 1, 5, { right: 140, bottom: 297 }, 1), { page: 0, top: 80, left: 9 }); // 105+40 > 140 -> next row
+same(nextSlot(row, 1, 5, { right: 140, bottom: 100 }, 2), { page: 1, top: 50, left: 9 }); // 80+30 > 100 -> next page
+assert.equal(nextSlot(row, 1, 5, { right: 140, bottom: 100 }, 1), null);
+// rule 2 with two rows: v gap 90-(50+30)=10
+same(nextSlot(grid, 3, 5, { right: 140, bottom: 297 }, 1), { page: 0, top: 130, left: 9 });
+
 console.log("ALL OK");

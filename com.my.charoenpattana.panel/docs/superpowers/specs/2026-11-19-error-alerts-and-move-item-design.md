@@ -42,7 +42,11 @@ Date: 2026-11-19 · Size: small change (short design)
 2. Sort into reading order: page → row (tops within 5 mm = same row, existing tolerance) → left.
 3. Find target index `t` = first product whose link file name contains the entered code. Not found → throw "ไม่พบรหัส ...".
 4. Record all positions `P[i] = {page, top, left}` **before** moving anything.
-5. Mode **Insert after**: for `i = n-2 … t+1` (reverse), move product `i` to `P[i+1]`. The **last product does not move**; alert tells the user to move `<code of last product>` manually. If `t` is the last product: nothing to move, alert that.
+5. Mode **Insert after**: for `i = n-2 … t+1` (reverse), move product `i` to `P[i+1]`. The **last product** goes to `nextSlot` (computed from `P` before any move):
+   - Rule 1, an earlier page has products: copy the nearest earlier page's layout. The last product is the j-th on its page, so it goes to that page's (j+1)-th position. If the page is full, it goes to the next page at the first position.
+   - Rule 2, first page: step right by width + horizontal gap. Past the trim right edge, go to the next row (left = row's first product, top + height + vertical gap). Past the trim bottom, go to the next page at the first product's position. Gaps are measured from the page's own products, 0 if there's no pair.
+   - No next page: the last product stays, and the alert asks the user to move it manually.
+   - If `t` is the last product: nothing to move, alert that.
 6. Mode **Remove**: delete the target's top-level item, then for `i = t+1 … n-1`, move product `i` to `P[i-1]`. Last slot becomes empty.
 7. Moving across pages: move item to `doc.pages[P.page]`, then `move([left, top])` (same pattern the current code uses).
 8. Return a summary string (moved count, mode, manual-move item) for the success alert.
